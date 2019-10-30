@@ -2,14 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1a02d68f-a7c0-4044-af8e-04c34c156414" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/data/data_IDW_储压(Mpa).csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/data_IDW_含气量.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/data_IDW_埋深(m).csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/data_IDW_渗透率.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/data_IDW_煤厚(m).csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/郑庄数据.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_points.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/井网构造实验.py" beforeDir="false" afterPath="$PROJECT_DIR$/井网构造实验.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GA_MultiPoints.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/create_well_grid.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/well_parttern_optimiation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/well_pattern_optimization.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/well_pattern_optimization.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/井网构造实验.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,23 +19,43 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/井网构造实验.py">
+        <entry file="file://$PROJECT_DIR$/well_parttern_optimiation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="150" column="26" lean-forward="true" selection-start-line="150" selection-start-column="26" selection-end-line="150" selection-end-column="26" />
+            <state relative-caret-position="275">
+              <caret line="100" lean-forward="true" selection-start-line="100" selection-end-line="100" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#111#288#0" />
+                <element signature="e#949#1540#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/create_well_grid.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="139">
+              <caret line="92" column="78" lean-forward="true" selection-start-line="92" selection-start-column="78" selection-end-line="92" selection-end-column="78" />
               <folding>
                 <element signature="e#153#171#0" expanded="true" />
-                <element signature="e#297#543#0" />
-                <element signature="e#502#529#0" />
-                <element signature="e#1978#3582#0" />
-                <element signature="e#3564#6030#0" />
-                <element signature="e#5609#6092#0" />
+                <element signature="e#290#536#0" />
+                <element signature="e#542#569#0" />
+                <element signature="e#2058#3668#0" />
+                <element signature="e#6364#6693#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -45,18 +64,24 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/井网构造实验.py" />
+        <option value="$PROJECT_DIR$/create_well_grid.py" />
+        <option value="$PROJECT_DIR$/well_parttern_optimiation.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="width" value="981" />
     <option name="height" value="788" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -64,11 +89,15 @@
               <item name="well_pattern_optimization" type="b2602c69:ProjectViewProjectNode" />
               <item name="well_pattern_optimization" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="well_pattern_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="well_pattern_optimization" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -76,6 +105,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\Git\well_pattern_optimization" />
       <recent name="F:\GitManagement\well_pattern_optimization\data" />
     </key>
   </component>
@@ -91,7 +121,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.well_parttern_optimiation">
     <configuration name="井网构造实验" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="well_pattern_optimization" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -113,8 +143,52 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="create_well_grid" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="well_pattern_optimization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/create_well_grid.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="well_parttern_optimiation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="well_pattern_optimization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/well_parttern_optimiation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.well_parttern_optimiation" />
+        <item itemvalue="Python.create_well_grid" />
         <item itemvalue="Python.井网构造实验" />
       </list>
     </recent_temporary>
@@ -133,16 +207,16 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16572638" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16517857" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.26280323" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.351752" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34754097" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.43770492" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -155,6 +229,17 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/create_well_grid.py</url>
+          <line>182</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/data/data_IDW_埋深(m).csv">
       <provider selected="true" editor-type-id="csv-text-editor" />
@@ -163,12 +248,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/data/data_IDW_含气量.csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/data_IDW_储压(Mpa).csv">
       <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
@@ -184,15 +263,80 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/井网构造实验.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="150" column="26" lean-forward="true" selection-start-line="150" selection-start-column="26" selection-end-line="150" selection-end-column="26" />
+        <state relative-caret-position="95">
+          <caret line="147" lean-forward="true" selection-end-line="171" />
+          <folding>
+            <element signature="e#260#6315#0" />
+            <element signature="e#289#535#0" />
+            <element signature="e#541#568#0" />
+            <element signature="e#2057#3667#0" />
+            <element signature="e#3730#6315#0" />
+            <element signature="e#6363#6834#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GA_MultiPoints_v2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="148" column="21" lean-forward="true" selection-start-line="148" selection-start-column="21" selection-end-line="148" selection-end-column="21" />
+          <folding>
+            <element signature="e#126#557#0" />
+            <element signature="e#634#1994#0" />
+            <element signature="e#2046#2355#0" />
+            <element signature="e#2395#2531#0" />
+            <element signature="e#2449#2507#0" />
+            <element signature="e#2576#2714#0" />
+            <element signature="e#2747#3316#0" />
+            <element signature="e#3357#3649#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GA_MultiPoints.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-361">
+          <caret line="88" selection-start-line="88" selection-end-line="88" />
+          <folding>
+            <element signature="e#126#557#0" />
+            <element signature="e#634#1994#0" />
+            <element signature="e#677#1942#0" />
+            <element signature="e#2046#2355#0" />
+            <element signature="e#2395#2531#0" />
+            <element signature="e#2576#2714#0" />
+            <element signature="e#2747#3316#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_储压(Mpa).csv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/create_well_grid.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="92" column="78" lean-forward="true" selection-start-line="92" selection-start-column="78" selection-end-line="92" selection-end-column="78" />
           <folding>
             <element signature="e#153#171#0" expanded="true" />
-            <element signature="e#297#543#0" />
-            <element signature="e#502#529#0" />
-            <element signature="e#1978#3582#0" />
-            <element signature="e#3564#6030#0" />
-            <element signature="e#5609#6092#0" />
+            <element signature="e#290#536#0" />
+            <element signature="e#542#569#0" />
+            <element signature="e#2058#3668#0" />
+            <element signature="e#6364#6693#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/well_parttern_optimiation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="100" lean-forward="true" selection-start-line="100" selection-end-line="100" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#111#288#0" />
+            <element signature="e#949#1540#0" />
           </folding>
         </state>
       </provider>

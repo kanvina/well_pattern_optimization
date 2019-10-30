@@ -11,6 +11,7 @@ create by WYD
 
 import numpy as np
 import pandas as pd
+
 from matplotlib import pyplot as plt
 
 class well_grid_class():
@@ -92,7 +93,7 @@ class well_grid_class():
         while y_num*y_len*np.sin(self.theta*np.pi/180)+range_y[0]<=range_y[1]:
             points_array[y_num]=[]
 
-            while x_len*x_num+ range_x[0]<=range_x[1]:
+            while x_len*x_num+ range_x[0]<=(range_x[1]+self.cell_len*self.x_zoom):
 
                 if y_num ==0:
 
@@ -133,38 +134,54 @@ class well_grid_class():
         return points_array
 
 def draw_scatter(points_array,xlim,ylim):
-    for points_row in points_array:
-        points_line = points_array[points_row]
-        for point in points_line:
-            point_LT = point[2]
-            point_center = point[3]
-            plt.scatter(point_LT[0], point_LT[1], marker='o', color='red', s=40, label='First')
-            plt.scatter(point_center[0], point_center[1], marker='x', color='red', s=40, label='First')
-            plt.xlim(xlim[0],xlim[1])
-            plt.ylim(ylim[0],ylim[1])
+    for point in points_array:
+        point_location=point[1]
+        if point[0]==0:
+            plt.scatter(point_location[0], point_location[1], marker='o', color='red', s=40, label='First')
+        else:
+            plt.scatter(point_location[0], point_location[1], marker='x', color='red', s=40, label='First')
+
+
     plt.show()
 
-
-
-if __name__=="__main__":
-
+def main():
     grid=well_grid_class()
-
     grid.cell_len = 100
     grid.x_zoom = 1.2
     grid.y_zoom = 1.5
-    grid.theta = 60
-    grid.gamma = 30
-    grid.Delta_x =20
-    grid.Delta_y = 30
+    grid.theta = 90
+    grid.gamma = 0
+    grid.Delta_x =0
+    grid.Delta_y = 0
 
     range_x=[-500,1500]
     range_y=[-500,1500]
     points_array=grid.create_five_well_grid(range_x,range_y)
 
+
+    well_points_array=[]
+
+    for points_row in points_array:
+        points_line = points_array[points_row]
+        for point in points_line:
+            point_LT = point[2]
+            well_points_array.append([0,point_LT])
+            point_center = point[3]
+            well_points_array.append([1,point_center])
+
+    return well_points_array
+
+
+
+
+
+
+if __name__=="__main__":
+    well_points_array=main()
     xlim=[0,1000]
     ylim=[0,1000]
-    draw_scatter(points_array,xlim,ylim)
+    draw_scatter(well_points_array,xlim,ylim)
+
 
 
 
