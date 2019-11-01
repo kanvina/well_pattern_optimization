@@ -27,6 +27,9 @@ def translateDNA(pop):#解码 将二进制转换为十进制的实际值，pop1�
     return pop1,pop2
 
 def select(pop, fitness):    # 根据概率选择
+
+
+
     idx = np.random.choice(np.arange(POP_SIZE), size=POP_SIZE, replace=True,
                            p=(fitness/fitness.sum()))
     return pop[idx]
