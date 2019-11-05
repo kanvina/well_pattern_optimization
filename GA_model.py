@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import copy
 from compute_grid_value import compute_sum_mean
 
 class GA_model_grid():
@@ -10,7 +11,8 @@ class GA_model_grid():
         "num_grids":50,
         "num_iteration": 5000,
         "cross_rate":0.7,
-        "mutate_rate":0.005
+        "mutate_rate":0.005,
+        "eliminate_rate":0.85
         }
 
         self.data_info={
@@ -22,21 +24,21 @@ class GA_model_grid():
 
         self.data_array=np.array( pd.read_csv(self.data_info['Path'],header=None))
 
-        self.cell_len_range=[64,128]
-        self.x_zoom_range=[2,16]
-        self.y_zoom_range=[2,16]
+        self.cell_len_range=[2000,3000]
+        self.x_zoom_range=[1,8]
+        self.y_zoom_range=[1,8]
         self.theta_range=[30,90]
         self.gamma_range=[0,90]
         self.Delta_x_range=[0,512]
         self.Delta_y_range=[0,512]
 
-    def target_func(self,grid_info,data_array):
+    def target_func(self,grid_info):
 
         x_range=self.data_info['x_range']
         y_range=self.data_info['y_range']
         data_cell_len=self.data_info['data_cell_len']
-        sum_num_mean_list = compute_sum_mean(data_array, x_range, y_range, data_cell_len, grid_info)
-        return sum_num_mean_list
+        sum_value = compute_sum_mean(self.data_array, x_range, y_range, data_cell_len, grid_info)
+        return sum_value
 
     def get_value_2(self,type):
 
@@ -124,75 +126,128 @@ class GA_model_grid():
                 'Delta_y': Delta_y
             }
 
-            # print(grid_info)
             pop_result_grid_info.append(grid_info)
-            sum_num_mean_list=self.target_func(grid_info,self.data_array)
-            pop_result_list.append(sum_num_mean_list[0])
+            sum_value=self.target_func(grid_info)
+            pop_result_list.append(sum_value)
 
         id_max=np.argmax(pop_result_list)
         max_grid=pop_result_grid_info[id_max]
 
+        # print('均值：',np.mean(pop_result_list),'最大值：',pop_result_list[id_max],'最佳方案：',max_grid)
 
+        return pop_result_list
+
+    def compute_grids_save(self,grids_pop):
+
+        pop_result_list=[]
+        pop_result_grid_info=[]
+
+        for DNA_line_value2 in grids_pop:
+
+            cell_len=self.translate_value_2(DNA_line_value2[0])
+            x_zoom=self.translate_value_2(DNA_line_value2[1])
+            y_zoom=self.translate_value_2(DNA_line_value2[2])
+            theta=self.translate_value_2(DNA_line_value2[3])
+            gamma=self.translate_value_2(DNA_line_value2[4])
+            Delta_x=self.translate_value_2(DNA_line_value2[5])
+            Delta_y=self.translate_value_2(DNA_line_value2[6])
+
+            grid_info = {
+                'cell_len': cell_len,
+                'x_zoom': x_zoom,
+                'y_zoom': y_zoom,
+                'theta': theta,
+                'gamma': gamma,
+                'Delta_x': Delta_x,
+                'Delta_y': Delta_y
+            }
+
+            pop_result_grid_info.append(grid_info)
+            sum_value=self.target_func(grid_info)
+            pop_result_list.append(sum_value)
+
+        id_max=np.argmax(pop_result_list)
+        max_grid=pop_result_grid_info[id_max]
 
         print('均值：',np.mean(pop_result_list),'最大值：',pop_result_list[id_max],'最佳方案：',max_grid)
-
 
         return pop_result_list
 
     def select(self,pop_result_list,grids_pop):  # 根据概率选择
-
-
+        grids_pop_copy=grids_pop
         pop_result_list=np.array(pop_result_list)
-        rate=0.8
+        rate=self.GA_model['eliminate_rate']
         drop_num = int(self.GA_model['num_grids'] *rate)
-        id_sort = pop_result_list.argsort()
 
+        id_sort = pop_result_list.argsort()
 
         save_id = id_sort[drop_num:self.GA_model['num_grids']]
         save_grids_pop_parent=[]
         for i in save_id:
-            save_grids_pop_parent.append(grids_pop[i])
+            save_grids_pop_parent.append(grids_pop_copy[i])
 
         drop_id = id_sort[0:drop_num]
-
         drop_grids_pop_parent = []
-        for i in drop_id:
-            drop_grids_pop_parent.append(grids_pop[i])
+        for n in drop_id:
+            drop_grids_pop_parent.append(grids_pop_copy[n])
 
         drop_value=pop_result_list[drop_id]
         idx = np.random.choice(np.arange(len(drop_grids_pop_parent)), size=len(drop_grids_pop_parent), replace=True,p=(drop_value / drop_value.sum()))
 
-        drop=[]
-        for i in idx:
-            drop.append(drop_grids_pop_parent[i])
+        drop_grids=[]
+        for m in idx:
+            drop_grids.append(drop_grids_pop_parent[m])
 
-        return drop,save_grids_pop_parent
+        return drop_grids,save_grids_pop_parent
 
     def crossover(self,drop_grids_pop_parent,save_grids_pop_parent):
-        # grids_pop_parent=[]
+        drop_child_list=[]
+        save_grids_pop=copy.deepcopy(save_grids_pop_parent)
+
+
+        # for drop_line in drop_grids_pop_parent:
+        #     print(1)
+        #
+        #     if np.random.rand() < self.GA_model['cross_rate']:
+        #         i_pop_save = np.random.randint(0,len(save_grids_pop))
+        #         grids_pop_line_save = save_grids_pop[i_pop_save]
+        #     # else:
+        #
+
+
 
         for n in range(len(drop_grids_pop_parent)):
             if np.random.rand() < self.GA_model['cross_rate']:
-                i_pop = np.random.randint(0,len(save_grids_pop_parent))
-                grids_pop_line = save_grids_pop_parent[i_pop]
+
+                i_pop_save = np.random.randint(0,len(save_grids_pop))
+                grids_pop_line_save = save_grids_pop[i_pop_save]
+
                 for i in range(len(drop_grids_pop_parent[n])):
                     grid_child = []
+
                     grid_DNA_parent = drop_grids_pop_parent[n][i][1]
                     grid_DNA_len = len(grid_DNA_parent)
-                    grid_DNA_pop = grids_pop_line[i][1]
-                    i_cross = np.random.randint(0, grid_DNA_len)
-                    grid_DNA_parent_cross = grid_DNA_parent[0:i_cross]
-                    grid_DNA_pop_cross = grid_DNA_pop[i_cross:grid_DNA_len]
 
+                    i_cross = np.random.randint(0,grid_DNA_len)
+
+                    grid_DNA_save = grids_pop_line_save[i][1]
+
+
+                    grid_DNA_save_cross = grid_DNA_save[0:i_cross]
+                    grid_DNA_parent_cross = grid_DNA_parent[i_cross:grid_DNA_len]
+
+
+                    grid_child.extend(grid_DNA_save_cross)
                     grid_child.extend(grid_DNA_parent_cross)
-                    grid_child.extend(grid_DNA_pop_cross)
+
                     drop_grids_pop_parent[n][i][1] = grid_child
 
         drop_grids_pop_parent_mutate=self.mutate(drop_grids_pop_parent)
-        drop_grids_pop_parent_mutate.extend(save_grids_pop_parent)
+        # drop_grids_pop_parent_mutate=drop_grids_pop_parent
 
+        save_grids_pop_parent.extend(drop_grids_pop_parent_mutate)
 
-        girds_pop_child=drop_grids_pop_parent_mutate
+        girds_pop_child=save_grids_pop_parent
         return girds_pop_child
 
     # def crossover(self,grids_pop_parent):
@@ -236,19 +291,21 @@ class GA_model_grid():
     #                 grids_pop_parent[n][i][1] = grid_child
     #     return grids_pop_parent
 
-    def mutate(self,girds_pop_child):
-        for i in range(len(girds_pop_child)):
-            child_DNA_line=girds_pop_child[i]
-            if np.random.rand() < self.GA_model['mutate_rate']:
-                for n in range(len(child_DNA_line)):
-                    DNA=child_DNA_line[n][1]
-                    id_mutate= np.random.randint(0,len(DNA))
+    def mutate(self,drop_grids_pop_parent):
 
-                    if DNA[id_mutate]==1:
-                        DNA[id_mutate]=0
-                    else:
-                        DNA[id_mutate]=1
-        return girds_pop_child
+        girds_pop_mutate=copy.deepcopy(drop_grids_pop_parent)
+
+        for i in range(len(girds_pop_mutate)):
+            child_DNA_line=girds_pop_mutate[i]
+            for n in range(len(child_DNA_line)):
+                DNA=child_DNA_line[n][1]
+                for id_mutate in range(len(DNA)):
+                    if np.random.rand() < self.GA_model['mutate_rate']:
+                        if DNA[id_mutate]==1:
+                            DNA[id_mutate]=0
+                        else:
+                            DNA[id_mutate]=1
+        return girds_pop_mutate
 
 
 if __name__=="__main__":
@@ -260,23 +317,25 @@ if __name__=="__main__":
         'y_range':[3946571, 3960751],
         'data_cell_len':100
     }
+
     GA.GA_model={
-        "num_grids":10,
-        "num_iteration": 150,
+        "num_grids":100,
+        "num_iteration": 1500,
         "cross_rate":0.8,
-        "mutate_rate":0.01
+        "mutate_rate":0.01,
+        "eliminate_rate": 0.9
     }
 
     grids_pop=GA.create_pop()
 
+    for i in range(GA.GA_model['num_iteration']):
 
-    for i in range(GA.GA_model['num_iteration']-1):
-        print(1+i)
         pop_result_list = GA.compute_grids(grids_pop)
-        drop_grids_pop_parent,save_grids_pop_parent = GA.select(pop_result_list, grids_pop)
-        girds_pop_child=GA.crossover(drop_grids_pop_parent,save_grids_pop_parent)
-        # girds_pop_child=GA.mutate(girds_pop_child)
-        grids_pop=girds_pop_child
+        drop_grids_pop_parent,save_grids_pop_parent = GA.select(pop_result_list,grids_pop)
+        print(1+i,'save')
+        GA.compute_grids_save(save_grids_pop_parent)
+        child=GA.crossover(drop_grids_pop_parent,save_grids_pop_parent)
+        grids_pop=child
 
 
 

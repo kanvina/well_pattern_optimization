@@ -1,5 +1,21 @@
 import numpy as np
-a=[10,200,1,2,5,4]
+import copy
+a=[10,[0,1]]
+b=copy.deepcopy(a)
+b[1][0]=100
 
-a=np.array(a)
-print(a.argsort())
+
+print(a)
+print(b)
+
+
+
+# def dec2bin(num):
+#     mid = []
+#     while True:
+#         if num == 0: break
+#         num,rem = divmod(num, 2)
+#         mid.insert(0,rem)
+#
+#     return mid
+# print (dec2bin(7))
