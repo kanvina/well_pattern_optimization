@@ -27,7 +27,7 @@ if __name__ =="__main__":
     for point_num in range(data_shape[0]*data_shape[1]):
         [point_row,point_column]=get_target_location(point_num, data_shape)
 
-        Value_B=10**15
+        Value_B=10**3
         Value_H=data_H[point_row,point_column]
         Value_V=data_V[point_row,point_column]
         Value_K=data_K[point_row,point_column]
@@ -35,7 +35,7 @@ if __name__ =="__main__":
         Value_p0=1.5
 
 
-        Value_target=Value_B*Value_H*Value_V*Value_K*(Value_p**2-Value_p0**2)
+        Value_target=Value_B*Value_H*Value_V*Value_K*0.01*(Value_p**2-Value_p0**2)
         data_target[point_row,point_column]=Value_target
 
     pd.DataFrame(data_target).to_csv('data/data_target.csv',index=0,header=0)

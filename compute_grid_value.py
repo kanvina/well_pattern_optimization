@@ -44,6 +44,7 @@ def create_well_grid_func(grid_range_x,grid_range_y,grid_info):
 
 def get_grid_value(well_points_array,data_array,x_range,y_range,cell_len):
     # points_value=[]
+    num=0
 
     sum_value=0
     for points in well_points_array:
@@ -51,6 +52,7 @@ def get_grid_value(well_points_array,data_array,x_range,y_range,cell_len):
         try:
             point_value=get_cell_value(data_array,x_range,y_range,cell_len,point_location)
             sum_value=sum_value+point_value
+            num=num+1
             # if points[0]==0:
             #     points_value.append([0,point_location])
             # else:
@@ -59,19 +61,20 @@ def get_grid_value(well_points_array,data_array,x_range,y_range,cell_len):
             continue
 
     # return sum_num_mean_list, points_value
-    return sum_value
+    return sum_value,num
 
 def compute_sum_mean(data_array,x_range,y_range,cell_len,grid_info):
 
     grid_len=1.4*max(x_range[1]-x_range[0],y_range[1]-y_range[0])
+
     center_location=[(x_range[1]+x_range[0])/2,(y_range[1]+y_range[0])/2]
     grid_range_x=[center_location[0]-grid_len/2,center_location[0]+grid_len/2]
     grid_range_y=[center_location[1]- grid_len/2,center_location[1]+ grid_len/2]
 
     well_points_array=create_well_grid_func(grid_range_x, grid_range_y,grid_info)
-    sum_value=get_grid_value(well_points_array,data_array,x_range,y_range,cell_len)
+    sum_value,well_num=get_grid_value(well_points_array,data_array,x_range,y_range,cell_len)
     # draw_scatter(points_value, x_range, y_range)
-    return sum_value
+    return sum_value,well_num
 
 if __name__ =="__main__":
 
