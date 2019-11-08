@@ -43,43 +43,50 @@ def create_well_grid_func(grid_range_x,grid_range_y,grid_info):
     return well_points_array
 
 def get_grid_value(well_points_array,data_array,x_range,y_range,cell_len):
-    points_value=[]
-    num_points=0
+    # points_value=[]
+    num=0
+
     sum_value=0
     for points in well_points_array:
         point_location=points[1]
         try:
             point_value=get_cell_value(data_array,x_range,y_range,cell_len,point_location)
             sum_value=sum_value+point_value
-            num_points = num_points + 1
-
-            if points[0]==0:
-                points_value.append([0,point_location])
-            else:
-                points_value.append([1, point_location])
-
+            num=num+1
+            # if points[0]==0:
+            #     points_value.append([0,point_location])
+            # else:
+            #     points_value.append([1, point_location])
         except:
             continue
 
-    sum_num_mean_list=[sum_value,num_points,sum_value/num_points]
-    return sum_num_mean_list,points_value
+    # return sum_num_mean_list, points_value
+    return sum_value,num
 
+def compute_sum_mean(data_array,x_range,y_range,cell_len,grid_info):
 
+    grid_len=1.4*max(x_range[1]-x_range[0],y_range[1]-y_range[0])
+
+    center_location=[(x_range[1]+x_range[0])/2,(y_range[1]+y_range[0])/2]
+    grid_range_x=[center_location[0]-grid_len/2,center_location[0]+grid_len/2]
+    grid_range_y=[center_location[1]- grid_len/2,center_location[1]+ grid_len/2]
+
+    well_points_array=create_well_grid_func(grid_range_x, grid_range_y,grid_info)
+    sum_value,well_num=get_grid_value(well_points_array,data_array,x_range,y_range,cell_len)
+    # draw_scatter(points_value, x_range, y_range)
+    return sum_value,well_num
 
 if __name__ =="__main__":
 
-    data_array=np.array( pd.read_csv('data/data_IDW_储压(Mpa).csv',header=None))
+    data_array=np.array( pd.read_csv('data/data_target.csv',header=None))
 
     x_range=[615887,635437]
     y_range=[3946571,3960751]
-    cell_len=100
+    data_cell_len=100
 
-
-
-    grid_range_x=[610887,640437]
-    grid_range_y=[3941571,3966751]
 
     grid_info={
+
         'cell_len':2000,
         'x_zoom':1,
         'y_zoom':1,
@@ -89,12 +96,9 @@ if __name__ =="__main__":
         'Delta_y':0
     }
 
-    well_points_array=create_well_grid_func(grid_range_x, grid_range_y,grid_info)
+    sum_num_mean_list=compute_sum_mean(data_array,x_range,y_range,data_cell_len,grid_info)
 
-    sum_num_mean_list, points_value=get_grid_value(well_points_array,data_array,x_range,y_range,cell_len)
 
-    draw_scatter(points_value, x_range, y_range)
-    print(sum_num_mean_list)
 
 
 

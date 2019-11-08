@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="1a02d68f-a7c0-4044-af8e-04c34c156414" name="Default Changelist" comment="" />
+=======
+    <list default="true" id="1a02d68f-a7c0-4044-af8e-04c34c156414" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/GA_model_V2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IDW.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GA_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/GA_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compute_grid_value.py" beforeDir="false" afterPath="$PROJECT_DIR$/compute_grid_value.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/data_target.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/data_target.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/郑庄数据.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/data/郑庄数据.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/get_target_mat.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_target_mat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+    </list>
+>>>>>>> f3d72eef25c63aa1a60f39c179ef2b1a7928bc35
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,32 +24,63 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/well_parttern_optimiation.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/GA_model.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="291">
               <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
+=======
+            <state relative-caret-position="117">
+              <caret line="325" column="29" selection-end-line="359" />
+>>>>>>> f3d72eef25c63aa1a60f39c179ef2b1a7928bc35
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <element signature="e#111#288#0" />
-                <element signature="e#949#1540#0" />
+                <element signature="e#908#1178#0" />
+                <element signature="e#1203#1521#0" />
+                <element signature="e#1581#1790#0" />
+                <element signature="e#1826#2618#0" />
+                <element signature="e#2654#2836#0" />
+                <element signature="e#2886#4064#0" />
+                <element signature="e#2993#3846#0" />
+                <element signature="e#5396#6306#0" />
+                <element signature="e#6385#8010#0" />
+                <element signature="e#8016#8055#0" />
+                <element signature="e#10153#10711#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/GA_model_V2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="59">
+              <caret line="295" column="43" lean-forward="true" selection-start-line="295" selection-start-column="43" selection-end-line="295" selection-end-column="43" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#194#890#0" />
+                <element signature="e#938#1208#0" />
+                <element signature="e#1251#1569#0" />
+                <element signature="e#1629#1838#0" />
+                <element signature="e#1874#2666#0" />
+                <element signature="e#2702#2884#0" />
+                <element signature="e#2934#4159#0" />
+                <element signature="e#3041#3941#0" />
+                <element signature="e#4218#5521#0" />
+                <element signature="e#5589#6539#0" />
+                <element signature="e#6618#8243#0" />
+                <element signature="e#8249#8288#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/create_well_grid.py">
+        <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="139">
-              <caret line="92" column="78" lean-forward="true" selection-start-line="92" selection-start-column="78" selection-end-line="92" selection-end-column="78" />
-              <folding>
-                <element signature="e#153#171#0" expanded="true" />
-                <element signature="e#290#536#0" />
-                <element signature="e#542#569#0" />
-                <element signature="e#2058#3668#0" />
-                <element signature="e#6364#6693#0" />
-              </folding>
+            <state relative-caret-position="38">
+              <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -56,8 +101,15 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/井网构造实验.py" />
-        <option value="$PROJECT_DIR$/create_well_grid.py" />
         <option value="$PROJECT_DIR$/well_parttern_optimiation.py" />
+        <option value="$PROJECT_DIR$/GA求解二元函数.py" />
+        <option value="$PROJECT_DIR$/create_well_grid.py" />
+        <option value="$PROJECT_DIR$/compute_grid_value.py" />
+        <option value="$PROJECT_DIR$/IDW.py" />
+        <option value="$PROJECT_DIR$/get_target_mat.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/GA_model.py" />
+        <option value="$PROJECT_DIR$/GA_model_V2.py" />
       </list>
     </option>
   </component>
@@ -73,7 +125,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -85,6 +136,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -92,8 +144,9 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="F:\Git\well_pattern_optimization" />
+      <recent name="F:\GitManagement\well_pattern_optimization" />
       <recent name="F:\GitManagement\well_pattern_optimization\data" />
+      <recent name="F:\Git\well_pattern_optimization" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -108,8 +161,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.well_parttern_optimiation">
-    <configuration name="井网构造实验" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.GA_model">
+    <configuration name="GA_model" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="well_pattern_optimization" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -121,7 +174,28 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/井网构造实验.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GA_model.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="compute_grid_value" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="well_pattern_optimization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/compute_grid_value.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -151,7 +225,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="well_parttern_optimiation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="get_target_mat" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="well_pattern_optimization" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -163,7 +237,28 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/well_parttern_optimiation.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/get_target_mat.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="well_pattern_optimization" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -174,9 +269,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.well_parttern_optimiation" />
+        <item itemvalue="Python.GA_model" />
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.get_target_mat" />
         <item itemvalue="Python.create_well_grid" />
-        <item itemvalue="Python.井网构造实验" />
+        <item itemvalue="Python.compute_grid_value" />
       </list>
     </recent_temporary>
   </component>
@@ -194,20 +291,31 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16517857" />
+=======
+    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16502115" />
+>>>>>>> f3d72eef25c63aa1a60f39c179ef2b1a7928bc35
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
+<<<<<<< HEAD
       <window_info anchor="bottom" id="Run" order="2" weight="0.34754097" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.43770492" />
+=======
+      <window_info anchor="bottom" id="Run" order="2" weight="0.4703504" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.19407009" />
+>>>>>>> f3d72eef25c63aa1a60f39c179ef2b1a7928bc35
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32884097" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32839838" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -215,30 +323,55 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/create_well_grid.py</url>
-          <line>182</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/data/data_IDW_埋深(m).csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/data/data_IDW_含气量.csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/井网构造实验.py" />
+    <entry file="file://$PROJECT_DIR$/GA_MultiPoints_v2.py" />
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_test.csv" />
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_H(m).csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_V.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_p(Mpa).csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="-456" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/well_parttern_optimiation.py" />
+    <entry file="file://$PROJECT_DIR$/../others/GA MultiPoints/test.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="291">
+          <caret line="1740" selection-start-line="1740" selection-end-line="1740" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GA_MultiPoints.py" />
+    <entry file="file://$PROJECT_DIR$/GA求解二元函数.py" />
     <entry file="file://$PROJECT_DIR$/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -247,82 +380,142 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/井网构造实验.py">
+    <entry file="file://$PROJECT_DIR$/compute_grid_value.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="147" lean-forward="true" selection-end-line="171" />
+        <state relative-caret-position="170">
+          <caret line="65" column="4" selection-start-line="65" selection-start-column="4" selection-end-line="65" selection-end-column="4" />
           <folding>
-            <element signature="e#260#6315#0" />
-            <element signature="e#289#535#0" />
-            <element signature="e#541#568#0" />
-            <element signature="e#2057#3667#0" />
-            <element signature="e#3730#6315#0" />
-            <element signature="e#6363#6834#0" />
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#193#370#0" />
+            <element signature="e#418#783#0" />
+            <element signature="e#853#1561#0" />
+            <element signature="e#1642#2202#0" />
           </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GA_MultiPoints_v2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="148" column="21" lean-forward="true" selection-start-line="148" selection-start-column="21" selection-end-line="148" selection-end-column="21" />
-          <folding>
-            <element signature="e#126#557#0" />
-            <element signature="e#634#1994#0" />
-            <element signature="e#2046#2355#0" />
-            <element signature="e#2395#2531#0" />
-            <element signature="e#2449#2507#0" />
-            <element signature="e#2576#2714#0" />
-            <element signature="e#2747#3316#0" />
-            <element signature="e#3357#3649#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GA_MultiPoints.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-361">
-          <caret line="88" selection-start-line="88" selection-end-line="88" />
-          <folding>
-            <element signature="e#126#557#0" />
-            <element signature="e#634#1994#0" />
-            <element signature="e#677#1942#0" />
-            <element signature="e#2046#2355#0" />
-            <element signature="e#2395#2531#0" />
-            <element signature="e#2576#2714#0" />
-            <element signature="e#2747#3316#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/data_IDW_储压(Mpa).csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/create_well_grid.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="92" column="78" lean-forward="true" selection-start-line="92" selection-start-column="78" selection-end-line="92" selection-end-column="78" />
+        <state relative-caret-position="2185">
+          <caret line="118" column="16" selection-start-line="118" selection-start-column="16" selection-end-line="118" selection-end-column="16" />
           <folding>
-            <element signature="e#153#171#0" expanded="true" />
-            <element signature="e#290#536#0" />
-            <element signature="e#542#569#0" />
-            <element signature="e#2058#3668#0" />
-            <element signature="e#6364#6693#0" />
+            <element signature="e#6392#6721#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/well_parttern_optimiation.py">
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_煤厚(m).csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_渗透率.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="-627" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_储压(Mpa).csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IDW.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
+        <state relative-caret-position="48">
+          <caret line="68" column="40" lean-forward="true" selection-start-line="68" selection-start-column="40" selection-end-line="68" selection-end-column="40" />
+          <folding>
+            <element signature="e#160#218#0" />
+            <element signature="e#256#449#0" />
+            <element signature="e#495#621#0" />
+            <element signature="e#692#855#0" />
+            <element signature="e#902#1483#0" />
+            <element signature="e#1557#1899#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/data_IDW_K.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/get_target_mat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="30" column="46" selection-start-line="30" selection-start-column="46" selection-end-line="30" selection-end-column="46" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <element signature="e#111#288#0" />
-            <element signature="e#949#1540#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/data_target.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state>
+          <caret selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GA_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="325" column="29" selection-end-line="359" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#908#1178#0" />
+            <element signature="e#1203#1521#0" />
+            <element signature="e#1581#1790#0" />
+            <element signature="e#1826#2618#0" />
+            <element signature="e#2654#2836#0" />
+            <element signature="e#2886#4064#0" />
+            <element signature="e#2993#3846#0" />
+            <element signature="e#5396#6306#0" />
+            <element signature="e#6385#8010#0" />
+            <element signature="e#8016#8055#0" />
+            <element signature="e#10153#10711#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GA_model_V2.py">
+      <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="291">
+          <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
+=======
+        <state relative-caret-position="59">
+          <caret line="295" column="43" lean-forward="true" selection-start-line="295" selection-start-column="43" selection-end-line="295" selection-end-column="43" />
+>>>>>>> f3d72eef25c63aa1a60f39c179ef2b1a7928bc35
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#194#890#0" />
+            <element signature="e#938#1208#0" />
+            <element signature="e#1251#1569#0" />
+            <element signature="e#1629#1838#0" />
+            <element signature="e#1874#2666#0" />
+            <element signature="e#2702#2884#0" />
+            <element signature="e#2934#4159#0" />
+            <element signature="e#3041#3941#0" />
+            <element signature="e#4218#5521#0" />
+            <element signature="e#5589#6539#0" />
+            <element signature="e#6618#8243#0" />
+            <element signature="e#8249#8288#0" />
           </folding>
         </state>
       </provider>
