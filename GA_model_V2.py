@@ -144,10 +144,11 @@ class GA_model_grid():
 
         return save_grids_pop_parent_copy
 
-    '''
-    单点交叉
-    '''
+
     # def crossover(self, drop_grids_pop_parent, save_grids_pop_parent):
+    #     '''
+    #     单点交叉
+    #     '''
     #     drop_grids_pop_parent_copy=copy.deepcopy(drop_grids_pop_parent)
     #     save_grids_pop_parent_copy=list(copy.deepcopy(save_grids_pop_parent))
     #
@@ -206,7 +207,7 @@ if __name__=="__main__":
     }
 
     GA.GA_model={
-        "num_grids":300,
+        "num_grids":500,
         "num_iteration": 5000,
         "cross_rate":0.6,
         "mutate_rate":0.05,
@@ -215,21 +216,23 @@ if __name__=="__main__":
 
     pop_ori=GA.create_pop()
 
-    # i_list = []
-    # mean_list = []
-    # max_list=[]
+    i_list = []
+    mean_list = []
+    max_list=[]
 
     for i in range(GA.GA_model['num_iteration']):
         print(i)
         sum_list=GA.compute(pop_ori)
         save_grids,drop_grids=GA.select(sum_list,pop_ori)
-        # i_list.append(i)
+        i_list.append(i)
+
         # mean_list.append(result_mean)
         # max_list.append(result_max)
+
         pop_ori=GA.crossover( drop_grids, save_grids)
-    # plt.scatter(i_list, mean_list, marker='o', color='red', s=40, label='First')
-    # plt.scatter(i_list, max_list, marker='x', color='blue', s=40, label='First')
-    # plt.show()
+        # plt.scatter(i_list, mean_list, marker='o', color='red', s=40, label='First')
+        # plt.scatter(i_list, max_list, marker='x', color='blue', s=40, label='First')
+        # plt.show()
 
 
 

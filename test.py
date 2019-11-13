@@ -1,8 +1,9 @@
-import numpy as np
-# a=[10,5,1]
-# b=a-np.min(a)
-# print(b)
-a=max(2,6)
+from sympy import *
 
 
-print(max(2,6))
+x = Symbol('x')
+
+b=x * 2 - 4
+a=solve(b, x)
+
+print(a[0])

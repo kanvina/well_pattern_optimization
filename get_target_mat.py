@@ -36,6 +36,7 @@ if __name__ =="__main__":
 
 
         Value_target=Value_B*Value_H*Value_V*Value_K*0.01*(Value_p**2-Value_p0**2)
+
         data_target[point_row,point_column]=Value_target
 
     pd.DataFrame(data_target).to_csv('data/data_target.csv',index=0,header=0)

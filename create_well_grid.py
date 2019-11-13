@@ -148,8 +148,8 @@ def main():
     grid=well_grid_class()
     grid.cell_len = 100
     grid.x_zoom = 1.2
-    grid.y_zoom = 1.5
-    grid.theta = 90
+    grid.y_zoom = 5
+    grid.theta = 20
     grid.gamma = 0
     grid.Delta_x =0
     grid.Delta_y = 0
