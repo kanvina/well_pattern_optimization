@@ -12,7 +12,7 @@ class Gas_prediction():
         self.P_L=2.38*145   #Langmuir 压力系数，Mpa
         self.P_d =3.5*145  #吸附压力
         self.V_L=38.16*37  #Langmuir 体积系数，m^3/t
-        self.P_i=15*145   #初始压力，Mpa
+        self.P_i=5*145   #初始压力，Mpa
         self.A=40000*11    #供气面积，m^2
         self.h=15*3.3        #煤厚
         self.phi_i=0.01  #初始孔隙度
@@ -77,7 +77,7 @@ class Gas_prediction():
         return Z
 
     def get_P_without_water(self,G_p):
-        G_i = self.A * self.h * self.rho_B*self.G_c
+        G_i = self.A * self.h * self.rho_B*self.G_c/1000000
         # G_i = self.A * self.h * self.rho_B *(self.V_L*self.P_d/(self.P_L+self.P_d) )
 
         P=self.P_L*self.P_i*(1-(G_p/G_i))/( self.P_i+self.P_L-self.P_i*(1-(G_p/G_i)) )
@@ -90,7 +90,7 @@ class Gas_prediction():
     def get_gas_prediction(self,P,k_g,Z):
         m_p=self.m(P,Z)
         m_P_wf=self.m(self.P_wf,Z)
-        q_g=( k_g*self.h*(m_p-m_P_wf))/( 1422*self.T*(  np.log(self.r_e/self.r_w)-0.75+self.s  ) )
+        q_g=0.001*( k_g*self.h*(m_p-m_P_wf))/( 1422*self.T*(  np.log(self.r_e/self.r_w)-0.75+self.s  ) )
         return q_g
 
     def get_water_prediction(self,P,k_w):
@@ -103,7 +103,7 @@ class Gas_prediction():
         return k_rg,k_rw
 
     def get_S_w(self,W_p,phi):
-        S_w = self.S_wi -( self.B_W * W_p / (7758.4 * self.A * self.h * phi))
+        S_w = self.S_wi -( self.B_W * W_p / (7758.4 * (self.A*0.00002295684) * self.h * phi))
         return S_w
 
     def get_phi(self,P):
@@ -161,7 +161,7 @@ if __name__ =="__main__":
 
         q_g=GP.get_gas_prediction(P,k_g,Z)
         q_g_list.append(q_g*10**6*0.028)
-        print('q_g:',q_g)
+        print('q_g:',q_g*10**6*0.028)
 
 
         if P >GP.P_d:
@@ -172,7 +172,7 @@ if __name__ =="__main__":
         # q_w = GP.get_water_prediction(P, k_w)
 
         q_w_list.append(q_w*0.159)
-        print('q_w:', q_w)
+        print('q_w:', q_w*0.159)
 
 
         G_p=G_p+q_g
