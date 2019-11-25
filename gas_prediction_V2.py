@@ -9,26 +9,26 @@ from matplotlib.font_manager import FontProperties
 class Gas_prediction():
 
     def __init__(self):
-        self.P_L=759   #Langmuir 压力系数，Mpa
-        self.P_d =600  #吸附压力
-        self.V_L=920   #Langmuir 体积系数，m^3/t
-        self.P_i=1191   #初始压力，Mpa
+        self.P_L=2.38*145   #Langmuir 压力系数，Mpa
+        self.P_d =3.5*145  #吸附压力
+        self.V_L=38.16*37  #Langmuir 体积系数，m^3/t
+        self.P_i=15*145   #初始压力，Mpa
         self.A=40000*11    #供气面积，m^2
-        self.h=6*3.3        #煤厚
-        self.phi_i=0.012  #初始孔隙度
-        self.Z=0.9       #煤层气偏差系数
-        self.rho_B=1.58 /50 #煤密度，t/m^3
-        self.S_wi=0.95     #初始含水饱和度
+        self.h=15*3.3        #煤厚
+        self.phi_i=0.01  #初始孔隙度
+        # self.Z=0.9       #煤层气偏差系数
+        self.rho_B=1.45*60 #煤密度，t/m^3
+        self.S_wi=0.95 #初始含水饱和度
         self.B_W=1         #水的地层体积系数
-        self.T=70        #温度，K
+        self.T=313*1.8     #温度，K
         self.P_b=0         #任意基座压力，Mpa
-        self.P_wf=100     #井底流压
+        self.P_wf=1.1*145     #井底流压
         self.mu_g=0.01    #气体粘度，mPa/s
-        self.r_e=200*3.3     #泄流半径，m
-        self.r_w=0.2       #井筒半径，m
+        self.r_e=300*3.3     #泄流半径，m
+        self.r_w=0.1*3.3      #井筒半径，m
         self.s=-3           #表皮系数
-        self.G_c=25*37        #含气量
-        self.mu_w=1
+        self.G_c=14.1*0.0168       #含气量
+        self.mu_w=0.6
 
     def get_z(self,P,T,theta):
         '''
@@ -99,9 +99,20 @@ class Gas_prediction():
         k_rw=S_w**2
         return k_rg,k_rw
 
-    def get_S_w(self,W_p):
-        S_w = self.S_wi -( self.B_W * W_p / (7758.4 * self.A * self.h * self.phi_i))
+    def get_S_w(self,W_p,phi):
+        S_w = self.S_wi -( self.B_W * W_p / (7758.4 * self.A * self.h * phi))
         return S_w
+
+    def get_phi(self,P):
+        '''
+        来源：
+        1:Palmer I，Mansoori J． How Permeability Depends on Stress and Pore Pressure in Coalbeds: a New Model［J］
+        2:Coalbed Methane Production System Simulation and Deliverability Forecasting: Coupled Surface Network/Wellbore/Reservoir Calculation
+        :param P:
+        :return:
+        '''
+        phi=self.phi_i+3*10**(-6)*(P-self.P_i)-0.0064*(  (P/(self.P_L+P))-( self.P_i/(self.P_L+self.P_i ) )   )
+        return phi
 
 
 
@@ -115,6 +126,8 @@ if __name__ =="__main__":
     P_list=[]
     i_list=[]
     Z_list=[]
+    phi_list=[]
+    S_w_list=[]
 
 
     for i in range(7200):
@@ -129,7 +142,15 @@ if __name__ =="__main__":
         Z_list.append(Z)
         print('Z:',Z)
 
-        S_w = GP.get_S_w(W_p)
+
+        phi=GP.get_phi(P)
+        phi_list.append(phi)
+        print('phi:',phi)
+
+        S_w = GP.get_S_w(W_p,phi)
+        S_w_list.append(S_w)
+        print('S_w:', S_w)
+
         k_g, k_w=GP.get_k_rg_k_rw(S_w)
 
         q_g=GP.get_gas_prediction(P,k_g,Z)
@@ -151,28 +172,31 @@ if __name__ =="__main__":
         G_p=G_p+q_g
         W_p=W_p+q_w
 
-
-
-    fig = plt.figure( )
+    fig = plt.figure()
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
 
-    ax1 = fig.add_subplot(2, 2, 1)
-    ax1.set_title('日产水量',fontproperties=font )
-    plt.scatter(i_list, q_w_list, marker='x', color='red', s=40, label='First')
+    ax1 = fig.add_subplot(3, 2, 1)
+    ax1.set_title('日产水量', fontproperties=font)
+    plt.scatter(i_list, q_w_list, marker='x', color='red', s=10, label='First')
 
-    ax2 = fig.add_subplot(2, 2, 2)
+    ax2 = fig.add_subplot(3, 2, 2)
     ax2.set_title('日产气量', fontproperties=font)
-    plt.scatter(i_list, q_g_list, marker='o', color='red', s=40, label='First')
+    plt.scatter(i_list, q_g_list, marker='o', color='red', s=10, label='First')
 
-    ax3= fig.add_subplot(2, 2, 3)
+    ax3 = fig.add_subplot(3, 2, 3)
     ax3.set_title('压力', fontproperties=font)
-    plt.scatter(i_list, P_list, marker='x', color='blue', s=40, label='First')
+    plt.scatter(i_list, P_list, marker='x', color='blue', s=10, label='First')
 
-    ax4 = fig.add_subplot(2, 2, 4)
+    ax4 = fig.add_subplot(3, 2, 4)
     ax4.set_title('Z', fontproperties=font)
-    plt.scatter(i_list, Z_list, marker='x', color='red', s=40, label='First')
+    plt.scatter(i_list, Z_list, marker='x', color='red', s=10, label='First')
+
+    ax5 = fig.add_subplot(3, 2, 5)
+    ax5.set_title('孔隙度', fontproperties=font)
+    plt.scatter(i_list, phi_list, marker='x', color='red', s=10, label='First')
+
+    ax6 = fig.add_subplot(3, 2,6)
+    ax6.set_title('含水饱和度', fontproperties=font)
+    plt.scatter(i_list, S_w_list, marker='x', color='red', s=10, label='First')
 
     plt.show()
-
-
-
