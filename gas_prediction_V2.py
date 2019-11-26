@@ -1,5 +1,5 @@
 import numpy as np
-# from sympy import *
+from sympy import *
 from matplotlib import pyplot as plt
 from matplotlib.font_manager import FontProperties
 '''
@@ -17,7 +17,7 @@ class Gas_prediction():
         self.h=15*3.3        #煤厚
         self.phi_i=0.01  #初始孔隙度
         # self.Z=0.9       #煤层气偏差系数
-        self.rho_B=1.45*60 #煤密度，t/m^3
+        self.rho_B=1.45/35 #煤密度，t/m^3
         self.S_wi=0.95 #初始含水饱和度
         self.B_W=1         #水的地层体积系数
         self.T=313*1.8     #温度，K
@@ -27,8 +27,16 @@ class Gas_prediction():
         self.r_e=300*3.3     #泄流半径，m
         self.r_w=0.1*3.3      #井筒半径，m
         self.s=-3           #表皮系数
-        self.G_c=14.1*0.0168       #含气量
+        self.G_c=14.1*35      #含气量
         self.mu_w=0.6
+        self.q_wi=2*6.289
+        self.P_sc = 14.7
+        self.T_sc = 520
+        self.Z_sc=1
+        self.q_wi = 2 * 6.289
+        self.Z_i=self.get_z( self.P_i*0.006895,  self.T/1.8, 0.8)
+        self.G_i = 1.3597*10**(-3)*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L*(self.P_i/(self.P_i+self.P_L))+\
+                   0.04356*(self.A*0.00002295684)*self.h*self.phi_i*(1-self.S_wi)*(self.P_i*self.Z_sc*self.T_sc/(self.Z_i*self.T*self.P_sc))
 
     def get_z(self,P,T,theta):
         '''
@@ -73,25 +81,56 @@ class Gas_prediction():
         Z=0.27*P_r/(rho_new*T_r )
         return Z
 
-    def get_P_without_water(self,G_p):
-        G_i = self.G_c * self.A * self.h * self.rho_B/1000000
-        A=1-(G_p/G_i)
-        P=self.P_L*self.P_i*(1-(G_p/G_i))/( self.P_i+self.P_L-self.P_i*(1-(G_p/G_i)) )
-        return  P
+    def get_P(self, S_w, Z, phi, G_p):
+        m=1.3597*10**(-3)
+        n=0.04356
+        x=self.G_i-G_p
+        A=m*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L
+        B=n*(self.A*0.00002295684)*self.h*phi*(1-S_w)*self.Z_sc*self.T_sc/(Z*self.T*self.P_sc)
+
+        P=self.P_i
+        is_pass=False
+
+        while is_pass == False:
+
+            f_p=B*P**2+(B*self.P_L+A-x)*P-x*self.P_L
+            f_P_coe=2*B*P+B*self.P_L+A-x
+
+            P_old=P
+            P=P_old-(f_p/f_P_coe)
+
+            if np.abs(P_old-P)<=0.0001:
+                is_pass=True
+
+        # P = Symbol('P')
+        # equation =self.G_i-G_p-1.3597*10**(-3)*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L*(P/(P+self.P_L))-\
+        #           0.04356*(self.A*0.00002295684)*self.h*phi*(1-S_w)*(P*self.Z_sc*self.T_sc/(Z*self.T*self.P_sc))
+
+        # result_P = solve(equation, P)
+        # P=int(result_P[1])
+
+
+        return P
+
+    # def get_P_without_water(self,G_p):
+    #     G_i = self.G_i
+    #     A=1-(G_p/G_i)
+    #     P=self.P_L*self.P_i*(1-(G_p/G_i))/( self.P_i+self.P_L-self.P_i*(1-(G_p/G_i)) )
+    #     return  P
 
     def m(self,P_in,Z):
         m_p=(P_in**2- self.P_b**2)/( self.mu_g*Z)
         return m_p
 
-    def get_gas_prediction(self,P,k_g,Z):
+    def get_gas_prediction(self,P,k_g,Z,P_wf):
         m_p=self.m(P,Z)
-        m_P_wf=self.m(self.P_wf,Z)
+        m_P_wf=self.m(P_wf,Z)
 
         q_g=0.001*( k_g*self.h*(m_p-m_P_wf))/( 1422*self.T*(  np.log(self.r_e/self.r_w)-0.75+self.s  ) )
         return q_g
 
-    def get_water_prediction(self,P,k_w):
-        q_w=k_w*self.h*(P-self.P_wf)/( 141.2*self.mu_w*self.B_W*(np.log(self.r_e/self.r_w)-0.75+self.s) )
+    def get_water_prediction(self,P,k_w,P_wf):
+        q_w=k_w*self.h*(P-P_wf)/( 141.2*self.mu_w*self.B_W*(np.log(self.r_e/self.r_w)-0.75+self.s) )
         return q_w
 
     def get_k_rg_k_rw(self,S_w):
@@ -114,6 +153,11 @@ class Gas_prediction():
         phi=self.phi_i+3*10**(-6)*(P-self.P_i)-0.0064*(  (P/(self.P_L+P))-( self.P_i/(self.P_L+self.P_i ) )   )
         return phi
 
+    def get_P_wf(self, P, k_w):
+        P_wf = P - (141.2 * self.B_W * self.mu_w * self.q_wi / (k_w * self.h)) * (
+                    np.log(self.r_e / self.r_w) - 0.75 + self.s)
+        return P_wf
+
 
 
 if __name__ =="__main__":
@@ -128,20 +172,15 @@ if __name__ =="__main__":
     Z_list=[]
     phi_list=[]
     S_w_list=[]
+    P=GP.P_i
 
-
-    for i in range(7200):
+    for i in range(4800):
         print(i+1)
         i_list.append(i)
 
-        P=GP.get_P_without_water(G_p)
-        P_list.append(P/145)
-        print('P:',P/145)
-
-        Z = GP.get_z(P*0.006895, 300, 0.8)
+        Z = GP.get_z(P*0.006895,  GP.T/1.8, 0.8)
         Z_list.append(Z)
         print('Z:',Z)
-
 
         phi=GP.get_phi(P)
         phi_list.append(phi)
@@ -153,24 +192,29 @@ if __name__ =="__main__":
 
         k_g, k_w=GP.get_k_rg_k_rw(S_w)
 
-        q_g=GP.get_gas_prediction(P,k_g,Z)
+        P_wf = GP.get_P_wf(P, k_w)
+        if P_wf<=GP.P_wf:
+            P_wf =GP.P_wf
+
+        q_g=GP. get_gas_prediction(P,k_g,Z,P_wf)
         q_g_list.append(q_g*10**6*0.028)
         print('q_g:',q_g*10**6*0.028)
 
-
-        if P >GP.P_d:
-            q_w=2.1*6.289
+        if P_wf >GP.P_wf:
+            q_w=GP.q_wi
         else:
-            q_w=GP.get_water_prediction(P,k_w)
-
-        # q_w = GP.get_water_prediction(P, k_w)
+            q_w=GP.get_water_prediction(P,k_w,P_wf)
 
         q_w_list.append(q_w*0.159)
         print('q_w:', q_w*0.159)
 
-
         G_p=G_p+q_g
         W_p=W_p+q_w
+
+        P=GP.get_P( S_w, Z, phi, G_p)
+        # P=GP.get_P_without_water(G_p)
+        P_list.append(P/145)
+        print('P:',P/145)
 
     fig = plt.figure()
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
