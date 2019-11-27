@@ -12,7 +12,7 @@ class Gas_prediction():
         self.P_L=2.38*145   #Langmuir 压力系数，Mpa
         self.P_cd =3*145  #吸附压力
         self.V_L=38.16*37  #Langmuir 体积系数，m^3/t
-        self.P_i=10*145   #初始压力，Mpa
+        self.P_i=6*145   #初始压力，Mpa
         self.A=40000*11    #供气面积，m^2
         self.h=15*3.3        #煤厚
         self.phi_i=0.01  #初始孔隙度
@@ -34,6 +34,8 @@ class Gas_prediction():
         self.Z_sc=1
         self.q_wi = 2 * 6.289
         self.Z_i=self.get_z( self.P_i*0.006895,  self.T/1.8, 0.8)
+
+        self.G=1.3597*10**(-3)*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L*(self.P_cd/(self.P_cd+self.P_L))
 
         self.G_f=0.04356*(self.A*0.00002295684)*self.h*self.phi_i*(1-self.S_wi)*(self.P_i*self.Z_sc*self.T_sc/(self.Z_i*self.T*self.P_sc))
 
@@ -103,6 +105,14 @@ class Gas_prediction():
             if np.abs(P_old-P)<=0.0001:
                 is_pass=True
         return P
+    # def get_P_2_test(self, S_w, Z, phi, G_p):
+    #     m=1.3597*10**(-3)
+    #     x=self.G-G_p
+    #     A=m*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L
+    #
+    #
+    #     P=self.P_L/(A-x)
+    #     return P
     def get_P_1(self, S_w, Z, phi, G_p):
         n = 0.04356
         B = n * (self.A * 0.00002295684) * self.h * phi * (1 - S_w) * self.Z_sc * self.T_sc / (Z * self.T * self.P_sc)
@@ -148,13 +158,20 @@ class Gas_prediction():
         q_g=0.001*( k_g*self.h*(m_p-m_P_wf))/( 1422*self.T*(  np.log(self.r_e/self.r_w)-0.75+self.s  ) )
         return q_g
 
+    def get_gas_prediction_level_1(self, P, phi, S_w, Z,G_p):
+        G_A= 0.04356*(self.A*0.00002295684)*self.h*phi*(1-S_w)*(P*self.Z_sc*self.T_sc/(Z*self.T*self.P_sc))
+        G_P_now= self.G_f-G_A
+        q_g=(G_P_now-G_p)*15
+
+        return q_g
+
     def get_water_prediction(self,P,k_w,P_wf):
         q_w=k_w*self.h*(P-P_wf)/( 141.2*self.mu_w*self.B_W*(np.log(self.r_e/self.r_w)-0.75+self.s) )
         return q_w
 
     def get_k_rg_k_rw(self,S_w):
-        k_rg=(1-S_w)**0.9
-        k_rw=S_w**2
+        k_rg=(1-S_w)**1.5
+        k_rw=S_w**1.5
         return k_rg,k_rw
 
     def get_S_w(self,W_p,phi):
@@ -181,8 +198,7 @@ class Gas_prediction():
 
 if __name__ =="__main__":
     GP = Gas_prediction()
-    W_p=0
-    G_p=0
+
 
     q_g_list=[]
     q_w_list=[]
@@ -191,11 +207,31 @@ if __name__ =="__main__":
     Z_list=[]
     phi_list=[]
     S_w_list=[]
-    P=GP.P_i
+    G_P_list=[]
 
-    for i in range(4800):
+    P=GP.P_i
+    W_p=0
+    G_p=0
+    Z = GP.get_z(P * 0.006895, GP.T / 1.8, 0.8)
+    phi = GP.phi_i
+    S_w =GP.S_wi
+    k_g, k_w = GP.get_k_rg_k_rw(S_w)
+    P_wf = GP.get_P_wf(P, k_w)
+    G_p_L_1=0
+
+    for i in range(7200):
         print(i+1)
         i_list.append(i)
+
+        if P_wf >GP.P_wf:
+            q_w=GP.q_wi
+        else:
+            q_w=GP.get_water_prediction(P,k_w,P_wf)
+
+        q_w_list.append(q_w*0.159)
+        print('q_w:', q_w*0.159)
+        W_p = W_p + q_w
+
 
         Z = GP.get_z(P*0.006895,  GP.T/1.8, 0.8)
         Z_list.append(Z)
@@ -215,35 +251,31 @@ if __name__ =="__main__":
         if P_wf<=GP.P_wf:
             P_wf =GP.P_wf
 
-        if P > GP.P_cd:
-            q_g=0
-        else:
-            q_g = GP.get_gas_prediction(P, k_g, Z, P_wf)
-        q_g_list.append(q_g*10**6*0.028)
-        print('q_g:',q_g*10**6*0.028)
-
-
-        if P_wf >GP.P_wf:
-            q_w=GP.q_wi
-        else:
-            q_w=GP.get_water_prediction(P,k_w,P_wf)
-
-
-        q_w_list.append(q_w*0.159)
-        print('q_w:', q_w*0.159)
-
-        G_p=G_p+q_g
-        W_p=W_p+q_w
 
         if P > GP.P_cd:
-
             P=GP.get_P_1( S_w, Z, phi, G_p)
         else:
             P = GP.get_P_2(S_w, Z, phi, G_p)
+            # P = GP.get_P_2_test(S_w, Z, phi, G_p)
 
-        # P=GP.get_P_without_water(G_p)
+
         P_list.append(P/145)
         print('P:',P/145)
+
+
+        if P > GP.P_cd:
+            q_g=GP. get_gas_prediction_level_1( P, phi, S_w, Z,G_p)
+            # q_g=0
+        else:
+            q_g = GP.get_gas_prediction(P, k_g, Z, P_wf)
+
+        q_g_list.append(q_g*10**6*0.028)
+        print('q_g:',q_g*10**6*0.028)
+        G_p = G_p + q_g
+        G_P_list.append(G_p*10**6*0.028)
+        print('G_p',G_p*10**6*0.028)
+
+
 
     fig = plt.figure()
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
@@ -265,11 +297,13 @@ if __name__ =="__main__":
     plt.scatter(i_list, Z_list, marker='x', color='red', s=10, label='First')
 
     ax5 = fig.add_subplot(3, 2, 5)
-    ax5.set_title('孔隙度', fontproperties=font)
-    plt.scatter(i_list, phi_list, marker='x', color='red', s=10, label='First')
+    ax5.set_title('累计产气量', fontproperties=font)
+    plt.scatter(i_list, G_P_list, marker='x', color='red', s=10, label='First')
 
     ax6 = fig.add_subplot(3, 2,6)
     ax6.set_title('含水饱和度', fontproperties=font)
     plt.scatter(i_list, S_w_list, marker='x', color='red', s=10, label='First')
+
+    print('G_p/G_i',G_p/GP.G_i)
 
     plt.show()
