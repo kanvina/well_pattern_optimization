@@ -10,9 +10,9 @@ class Gas_prediction():
 
     def __init__(self):
         self.P_L=2.38*145   #Langmuir 压力系数，Mpa
-        self.P_d =3.5*145  #吸附压力
+        self.P_cd =3*145  #吸附压力
         self.V_L=38.16*37  #Langmuir 体积系数，m^3/t
-        self.P_i=5*145   #初始压力，Mpa
+        self.P_i=10*145   #初始压力，Mpa
         self.A=40000*11    #供气面积，m^2
         self.h=15*3.3        #煤厚
         self.phi_i=0.01  #初始孔隙度
@@ -29,14 +29,16 @@ class Gas_prediction():
         self.s=-3           #表皮系数
         self.G_c=14.1*35      #含气量
         self.mu_w=0.6
-        self.q_wi=2*6.289
         self.P_sc = 14.7
         self.T_sc = 520
         self.Z_sc=1
         self.q_wi = 2 * 6.289
         self.Z_i=self.get_z( self.P_i*0.006895,  self.T/1.8, 0.8)
-        self.G_i = 1.3597*10**(-3)*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L*(self.P_i/(self.P_i+self.P_L))+\
-                   0.04356*(self.A*0.00002295684)*self.h*self.phi_i*(1-self.S_wi)*(self.P_i*self.Z_sc*self.T_sc/(self.Z_i*self.T*self.P_sc))
+
+        self.G_f=0.04356*(self.A*0.00002295684)*self.h*self.phi_i*(1-self.S_wi)*(self.P_i*self.Z_sc*self.T_sc/(self.Z_i*self.T*self.P_sc))
+
+        self.G_i = 1.3597*10**(-3)*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L*(self.P_cd/(self.P_cd+self.P_L))+\
+                     0.04356*(self.A*0.00002295684)*self.h*self.phi_i*(1-self.S_wi)*(self.P_cd*self.Z_sc*self.T_sc/(self.Z_i*self.T*self.P_sc))
 
     def get_z(self,P,T,theta):
         '''
@@ -80,7 +82,6 @@ class Gas_prediction():
                 rho_pass=True
         Z=0.27*P_r/(rho_new*T_r )
         return Z
-
     def get_P(self, S_w, Z, phi, G_p):
         m=1.3597*10**(-3)
         n=0.04356
@@ -101,15 +102,33 @@ class Gas_prediction():
 
             if np.abs(P_old-P)<=0.0001:
                 is_pass=True
+        return P
+    def get_P_1(self, S_w, Z, phi, G_p):
+        n = 0.04356
+        B = n * (self.A * 0.00002295684) * self.h * phi * (1 - S_w) * self.Z_sc * self.T_sc / (Z * self.T * self.P_sc)
+        P=(self.G_f-G_p)/B
+        return P
+    def get_P_2(self, S_w, Z, phi, G_p):
 
-        # P = Symbol('P')
-        # equation =self.G_i-G_p-1.3597*10**(-3)*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L*(P/(P+self.P_L))-\
-        #           0.04356*(self.A*0.00002295684)*self.h*phi*(1-S_w)*(P*self.Z_sc*self.T_sc/(Z*self.T*self.P_sc))
+        m=1.3597*10**(-3)
+        n=0.04356
+        x=self.G_i-G_p
+        A=m*(self.A*0.00002295684)*self.h*(self.rho_B*35)*self.V_L
+        B=n*(self.A*0.00002295684)*self.h*phi*(1-S_w)*self.Z_sc*self.T_sc/(Z*self.T*self.P_sc)
 
-        # result_P = solve(equation, P)
-        # P=int(result_P[1])
+        P=self.P_i
+        is_pass=False
 
+        while is_pass == False:
 
+            f_p=B*P**2+(B*self.P_L+A-x)*P-x*self.P_L
+            f_P_coe=2*B*P+B*self.P_L+A-x
+
+            P_old=P
+            P=P_old-(f_p/f_P_coe)
+
+            if np.abs(P_old-P)<=0.0001:
+                is_pass=True
         return P
 
     # def get_P_without_water(self,G_p):
@@ -134,7 +153,7 @@ class Gas_prediction():
         return q_w
 
     def get_k_rg_k_rw(self,S_w):
-        k_rg=(1-S_w)**2
+        k_rg=(1-S_w)**0.9
         k_rw=S_w**2
         return k_rg,k_rw
 
@@ -196,14 +215,19 @@ if __name__ =="__main__":
         if P_wf<=GP.P_wf:
             P_wf =GP.P_wf
 
-        q_g=GP. get_gas_prediction(P,k_g,Z,P_wf)
+        if P > GP.P_cd:
+            q_g=0
+        else:
+            q_g = GP.get_gas_prediction(P, k_g, Z, P_wf)
         q_g_list.append(q_g*10**6*0.028)
         print('q_g:',q_g*10**6*0.028)
+
 
         if P_wf >GP.P_wf:
             q_w=GP.q_wi
         else:
             q_w=GP.get_water_prediction(P,k_w,P_wf)
+
 
         q_w_list.append(q_w*0.159)
         print('q_w:', q_w*0.159)
@@ -211,7 +235,12 @@ if __name__ =="__main__":
         G_p=G_p+q_g
         W_p=W_p+q_w
 
-        P=GP.get_P( S_w, Z, phi, G_p)
+        if P > GP.P_cd:
+
+            P=GP.get_P_1( S_w, Z, phi, G_p)
+        else:
+            P = GP.get_P_2(S_w, Z, phi, G_p)
+
         # P=GP.get_P_without_water(G_p)
         P_list.append(P/145)
         print('P:',P/145)
