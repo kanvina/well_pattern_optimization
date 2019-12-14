@@ -207,20 +207,28 @@ if __name__=="__main__":
         print('q_w:', q_w)
         W_p = W_p + q_w
 
+        S_w = GP.get_S_w(W_p,phi)
+        S_w_list.append(S_w)
+        print('S_w:', S_w)
+
+        if P > GP.P_cd:
+            P=GP.get_P_1( S_w, Z, phi, G_p)
+        else:
+            P = GP.get_P_2(S_w, Z, phi, G_p)
 
         Z = GP.get_z(P,GP.T,0.8)
         Z_list.append(Z)
         print('Z:',Z)
 
+        P_list.append(P)
+        print('P:',P)
+
         phi=GP.get_phi(P)
         phi_list.append(phi)
         print('phi:',phi)
+
         K=GP.get_K(phi)
         K_list.append(K)
-
-        S_w = GP.get_S_w(W_p,phi)
-        S_w_list.append(S_w)
-        print('S_w:', S_w)
 
         k_g, k_w=GP.get_k_rg_k_rw(S_w)
 
@@ -232,17 +240,12 @@ if __name__=="__main__":
         P_wf_list.append(P_wf)
 
 
-        if P > GP.P_cd:
-            P=GP.get_P_1( S_w, Z, phi, G_p)
-        else:
-            P = GP.get_P_2(S_w, Z, phi, G_p)
 
-        P_list.append(P)
-        print('P:',P)
 
 
         if P > GP.P_cd:
-            q_g=GP. get_gas_prediction_level_1( P, phi, S_w, Z,G_p)
+            # q_g=GP. get_gas_prediction_level_1( P, phi, S_w, Z,G_p)
+            q_g=0
 
         else:
             q_g = GP.get_gas_prediction(P,k_g,Z,P_wf,K)
@@ -252,6 +255,9 @@ if __name__=="__main__":
         G_p = G_p + q_g
         G_P_list.append(G_p)
         print('G_p',G_p)
+
+
+
 
     fig = plt.figure()
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
