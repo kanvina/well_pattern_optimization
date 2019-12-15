@@ -12,8 +12,9 @@ class Gas_prediction():
         self.V_L = 24.75  # Langmuir 体积系数，m^3/t
         self.P_i = 6  # 初始压力，Mpa
         self.A = 40000*3.1415926    # 供气面积，m^2
-        self.h = 15 # 煤厚
+        self.h = 15 # 煤厚,m
         self.phi_i = 0.01  # 初始孔隙度
+        self.K_i=3     #初始渗透率
         self.rho_B = 1.45  # 煤密度，t/m^3
         self.S_wi = 0.95  # 初始含水饱和度
         self.B_W = 1  # 水的地层体积系数
@@ -23,22 +24,22 @@ class Gas_prediction():
         self.r_e = 200  # 泄流半径，m
         self.r_w = 0.1  # 井筒半径，m
         self.s = -1  # 表皮系数
-        self.mu_w = 0.6
-        self.P_sc = 14*0.0068948
-        self.T_sc = 289
-        self.Z_sc = 1
-        self.q_wi = 2.5
-        self.K_i=3
+        self.mu_w = 0.6#水的粘度系数
+        self.P_sc = 14*0.0068948#标准压力，Mpa
+        self.T_sc = 289#标准温度，K
+        self.Z_sc = 1#标准压缩系数
+        self.q_wi = 2.5#初始排水量，m^3
         self.Z_i = self.get_z(self.P_i ,self.T , 0.8)
         self.G = self.A * self.h * self.rho_B * self.V_L * (self.P_cd / (self.P_cd + self.P_L))
         self.G_f = self.A * self.h * self.phi_i * (1 - self.S_wi) * (self.P_i * self.Z_sc * self.T_sc / (self.Z_i * self.T * self.P_sc))
 
-
     def get_z(self, P, T, theta):
         '''
+        计算天然气压缩系数
         算法来源：天然气压缩因子计算方法对比及应用_董萌
-        :param P:
+        :param P:当前压力，Mpa
         :param theta: 天然气相对密度
+        :param T: 温度，K
         :return:
         '''
         P = P * 1000
@@ -79,30 +80,50 @@ class Gas_prediction():
         Z = 0.27 * P_r / (rho_new * T_r)
         return Z
 
-
-
     def get_phi(self,P):
         '''
+        计算孔隙度
         来源：一种快速准确预测煤层气井生产动态的解析模型_石军太
-        :param P:
+        :param P:当前压力
         :return:
         '''
-        C_p=0.02
+        C_p=0.02#孔隙压缩系数
         phi=(1-C_p*(self.P_i-P))*self.phi_i
 
         return phi
 
-
     def get_K(self,phi):
+        '''
+        计算渗透率
+        来源：一种快速准确预测煤层气井生产动态的解析模型_石军太
+        :param phi:当前孔隙度
+        :return:
+        '''
         K=self.K_i*(phi/self.phi_i)**3
         return K
 
     def get_P_1(self, S_w, Z, phi, G_p):
+        '''
+        排水降压阶段压力计算
+        :param S_w: 含水饱和度
+        :param Z: 气体压缩因子
+        :param phi: 孔隙度
+        :param G_p: 累计产气量
+        :return:
+        '''
         B = self.A * self.h * phi * (1 - S_w) * self.Z_sc * self.T_sc / (Z * self.T * self.P_sc)
         P = (self.G_f - G_p) / B
         return P
 
     def get_P_2(self, S_w, Z, phi, G_p):
+        '''
+        煤层气解吸阶段压力计算
+        :param S_w:
+        :param Z:
+        :param phi:
+        :param G_p:
+        :return:
+        '''
 
         x=self.G+self.G_f-G_p
         A=self.A*self.h*self.rho_B*self.V_L
@@ -124,10 +145,21 @@ class Gas_prediction():
         return P
 
     def get_S_w(self,W_p,phi):
+        '''
+        计算含水饱和度
+        :param W_p: 累计产水量
+        :param phi: 孔隙度
+        :return:
+        '''
         S_w = self.S_wi -( self.B_W * W_p / (self.A * self.h * phi))
         return S_w
 
     def get_k_rg_k_rw(self,S_w):
+        '''
+        气水相渗透率计算
+        :param S_w: 含水饱和度
+        :return:
+        '''
         k_rg=(1-S_w)**0.9
         k_rw=S_w**5
         return k_rg,k_rw
@@ -139,14 +171,40 @@ class Gas_prediction():
         return q_g
 
     def get_gas_prediction(self,P,k_g,Z,P_wf,K):
+        '''
+        气体产能计算
+        :param P:压力
+        :param k_g:气相渗透率
+        :param Z:气体压缩因子
+        :param P_wf:井底流压
+        :param K:渗透率
+        :return:q_g，日产气量，m^3
+        '''
         q_g=774.6*K*k_g*self.h*(P**2-P_wf**2)/(self.T*self.mu_g*Z*( np.log(self.r_e/self.r_w)-0.75+self.s ))
         return q_g
 
     def get_water_prediction(self,P,k_w,P_wf,K,S_w):
+        '''
+        产水量计算
+        :param P:
+        :param k_w:
+        :param P_wf:
+        :param K:
+        :param S_w:
+        :return: q_w，日产水量，m^3
+        '''
         q_w=0.543*k_w*S_w*K*self.h*(P-P_wf)/(self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s ))
         return q_w
 
     def get_P_wf(self, P,k_w,K,S_w):
+        '''
+        计算井底流压，根据产水量计算公式反推
+        :param P:
+        :param k_w:
+        :param K:
+        :param S_w:
+        :return:
+        '''
         P_wf=P-(self.q_wi*self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s )/(0.543*k_w*S_w*K*self.h))
         return P_wf
 
@@ -163,15 +221,12 @@ class Gas_prediction():
     #     q_g=0.0283168*q_g
     #     return q_g
 
-
-
-
-
-
-
 if __name__=="__main__":
     GP = Gas_prediction()
 
+    '''
+    定义列表，存放结果
+    '''
     q_g_list=[]
     q_w_list=[]
     P_list=[]
@@ -183,6 +238,9 @@ if __name__=="__main__":
     P_wf_list=[]
     K_list=[]
 
+    '''
+    定义初始参数
+    '''
     P=GP.P_i
     W_p=0
     G_p=0
@@ -192,73 +250,93 @@ if __name__=="__main__":
     S_w =GP.S_wi
     k_g, k_w = GP.get_k_rg_k_rw(S_w)
     P_wf = GP.get_P_wf( P,k_w,K,S_w)
-
-
+    '''
+    设定排采时间，动态预测
+    '''
     for i in range(7200):
         print(i+1)
         i_list.append(i)
-
+        '''
+        排水，根据井底流压计算排水量
+        '''
         if P_wf > GP.P_wf:
             q_w=GP.q_wi
         else:
             q_w=GP.get_water_prediction(P,k_w,P_wf,K,S_w)
-
         q_w_list.append(q_w)
         print('q_w:', q_w)
         W_p = W_p + q_w
-
+        '''
+        计算含水饱和度
+        '''
         S_w = GP.get_S_w(W_p,phi)
         S_w_list.append(S_w)
         print('S_w:', S_w)
 
+        '''
+        计算压力
+        '''
         if P > GP.P_cd:
             P=GP.get_P_1( S_w, Z, phi, G_p)
         else:
             P = GP.get_P_2(S_w, Z, phi, G_p)
+        P_list.append(P)
+        print('P:',P)
 
+        '''
+        计算气体压缩因子
+        '''
         Z = GP.get_z(P,GP.T,0.8)
         Z_list.append(Z)
         print('Z:',Z)
 
-        P_list.append(P)
-        print('P:',P)
-
+        '''
+        计算孔隙度
+        '''
         phi=GP.get_phi(P)
         phi_list.append(phi)
         print('phi:',phi)
 
+        '''
+        计算渗透率
+        '''
         K=GP.get_K(phi)
         K_list.append(K)
 
+        '''
+        计算气水相渗透率
+        '''
         k_g, k_w=GP.get_k_rg_k_rw(S_w)
 
+        '''
+        计算井底流压，若井底流压小于设定值，则认为当前井底流压为设定值
+        '''
         if P_wf > GP.P_wf:
             P_wf = GP.get_P_wf(P, k_w, K, S_w)
         else:
             P_wf = GP.P_wf
-
         P_wf_list.append(P_wf)
 
-
-
-
-
+        '''
+        根据当前压力，判断排采阶段，计算产气量
+        '''
         if P > GP.P_cd:
             # q_g=GP. get_gas_prediction_level_1( P, phi, S_w, Z,G_p)
             q_g=0
-
         else:
             q_g = GP.get_gas_prediction(P,k_g,Z,P_wf,K)
-
         q_g_list.append(q_g)
         print('q_g:',q_g)
         G_p = G_p + q_g
         G_P_list.append(G_p)
         print('G_p',G_p)
 
+    #
+    # print('G_p/G_i',G_p/GP.G_i)
 
-
-
+    '''
+    结果可视化
+    '''
     fig = plt.figure()
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
 
@@ -285,7 +363,4 @@ if __name__=="__main__":
     ax6 = fig.add_subplot(3, 2,6)
     ax6.set_title('含水饱和度', fontproperties=font)
     plt.scatter(i_list, S_w_list, marker='x', color='red', s=10, label='First')
-    #
-    # print('G_p/G_i',G_p/GP.G_i)
-
     plt.show()
