@@ -183,20 +183,19 @@ class Gas_prediction():
         q_g=774.6*K*k_g*self.h*(P**2-P_wf**2)/(self.T*self.mu_g*Z*( np.log(self.r_e/self.r_w)-0.75+self.s ))
         return q_g
 
-    def get_water_prediction(self,P,k_w,P_wf,K,S_w):
+    def get_water_prediction(self,P,k_w,P_wf,K):
         '''
         产水量计算
         :param P:
         :param k_w:
         :param P_wf:
         :param K:
-        :param S_w:
         :return: q_w，日产水量，m^3
         '''
-        q_w=0.543*k_w*S_w*K*self.h*(P-P_wf)/(self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s ))
+        q_w=0.543*k_w*K*self.h*(P-P_wf)/(self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s ))
         return q_w
 
-    def get_P_wf(self, P,k_w,K,S_w):
+    def get_P_wf(self, P,k_w,K):
         '''
         计算井底流压，根据产水量计算公式反推
         :param P:
@@ -205,7 +204,7 @@ class Gas_prediction():
         :param S_w:
         :return:
         '''
-        P_wf=P-(self.q_wi*self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s )/(0.543*k_w*S_w*K*self.h))
+        P_wf=P-(self.q_wi*self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s )/(0.543*k_w*K*self.h))
         return P_wf
 
     # def m(self,P_in,Z):
@@ -249,7 +248,7 @@ if __name__=="__main__":
     K=GP.K_i
     S_w =GP.S_wi
     k_g, k_w = GP.get_k_rg_k_rw(S_w)
-    P_wf = GP.get_P_wf( P,k_w,K,S_w)
+    P_wf = GP.get_P_wf( P,k_w,K)
     '''
     设定排采时间，动态预测
     '''
@@ -262,7 +261,7 @@ if __name__=="__main__":
         if P_wf > GP.P_wf:
             q_w=GP.q_wi
         else:
-            q_w=GP.get_water_prediction(P,k_w,P_wf,K,S_w)
+            q_w=GP.get_water_prediction(P,k_w,P_wf,K)
         q_w_list.append(q_w)
         print('q_w:', q_w)
         W_p = W_p + q_w
@@ -312,7 +311,7 @@ if __name__=="__main__":
         计算井底流压，若井底流压小于设定值，则认为当前井底流压为设定值
         '''
         if P_wf > GP.P_wf:
-            P_wf = GP.get_P_wf(P, k_w, K, S_w)
+            P_wf = GP.get_P_wf(P, k_w, K)
         else:
             P_wf = GP.P_wf
         P_wf_list.append(P_wf)
