@@ -8,18 +8,18 @@ from matplotlib.font_manager import FontProperties
 class Gas_prediction():
     def __init__(self,A):
         self.P_L = 4 # Langmuir 压力系数，Mpa
-        self.P_cd = 3.5  # 临界解吸压力
+        self.P_cd = 4.5  # 临界解吸压力
         self.V_L = 24.75  # Langmuir 体积系数，m^3/t
         self.P_i = 6  # 初始压力，Mpa
         self.A = A    # 供气面积，m^2
-        self.h = 15 # 煤厚,m
+        self.h = 6 # 煤厚,m
         self.phi_i = 0.01  # 初始孔隙度
         self.K_i=3     #初始渗透率
         self.rho_B = 1.45  # 煤密度，t/m^3
         self.S_wi = 0.95  # 初始含水饱和度
         self.B_W = 1  # 水的地层体积系数
         self.T = 313  # 温度，K
-        self.P_wf = 2 # 井底流压
+        self.P_wf = 1 # 井底流压
         self.mu_g = 0.01  # 气体粘度，mPa/s
         self.r_e = 200  # 泄流半径，m
         self.r_w = 0.1  # 井筒半径，m
@@ -28,7 +28,7 @@ class Gas_prediction():
         self.P_sc = 14*0.0068948#标准压力，Mpa
         self.T_sc = 289#标准温度，K
         self.Z_sc = 1#标准压缩系数
-        self.q_wi = 2.5#初始排水量，m^3
+        self.q_wi = 2#初始排水量，m^3
         self.Z_i = self.get_z(self.P_i ,self.T , 0.8)
         self.G = self.A * self.h * self.rho_B * self.V_L * (self.P_cd / (self.P_cd + self.P_L))
         self.G_f = self.A * self.h * self.phi_i * (1 - self.S_wi) * (self.P_i * self.Z_sc * self.T_sc / (self.Z_i * self.T * self.P_sc))
@@ -160,7 +160,7 @@ class Gas_prediction():
         :param S_w: 含水饱和度
         :return:
         '''
-        k_rg=(1-S_w)**0.9
+        k_rg=(1-S_w)**1
         k_rw=S_w**5
         return k_rg,k_rw
 
@@ -252,17 +252,17 @@ if __name__=="__main__":
     '''
     设定排采时间，动态预测
     '''
-    for i in range(7200):
+    for i in range(720):
         print(i+1)
-        i_list.append(i)
+        i_list.append(i*10)
         '''
         排水，根据井底流压计算排水量
         '''
         if P_wf > GP.P_wf:
-            q_w=GP.q_wi
+            q_w=GP.q_wi*10
         else:
-            q_w=GP.get_water_prediction(P,k_w,P_wf,K)
-        q_w_list.append(q_w)
+            q_w=GP.get_water_prediction(P,k_w,P_wf,K)*10
+        q_w_list.append(q_w/10)
         print('q_w:', q_w)
         W_p = W_p + q_w
         '''
@@ -323,8 +323,8 @@ if __name__=="__main__":
             # q_g=GP. get_gas_prediction_level_1( P, phi, S_w, Z,G_p)
             q_g=0
         else:
-            q_g = GP.get_gas_prediction(P,k_g,Z,P_wf,K)
-        q_g_list.append(q_g)
+            q_g = GP.get_gas_prediction(P,k_g,Z,P_wf,K)*10
+        q_g_list.append(q_g/10)
         print('q_g:',q_g)
         G_p = G_p + q_g
         G_P_list.append(G_p)
@@ -356,10 +356,11 @@ if __name__=="__main__":
     plt.scatter(i_list, Z_list, marker='x', color='red', s=10, label='First')
 
     ax5 = fig.add_subplot(3, 2, 5)
-    ax5.set_title('渗透率', fontproperties=font)
-    plt.scatter(i_list, K_list, marker='x', color='red', s=10, label='First')
+    ax5.set_title('井底流压', fontproperties=font)
+    plt.scatter(i_list, P_wf_list, marker='x', color='red', s=10, label='First')
 
     ax6 = fig.add_subplot(3, 2,6)
     ax6.set_title('含水饱和度', fontproperties=font)
     plt.scatter(i_list, S_w_list, marker='x', color='red', s=10, label='First')
     plt.show()
+
