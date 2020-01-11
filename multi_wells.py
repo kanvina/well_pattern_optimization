@@ -370,8 +370,8 @@ class Gas_prediction():
         :param S_w: 含水饱和度
         :return:
         '''
-        k_rg=(1-S_w)**2
-        k_rw=S_w**2
+        k_rg=(1-S_w)**1.25
+        k_rw=S_w**5
         return k_rg,k_rw
 
 
@@ -439,9 +439,10 @@ if __name__ =="__main__":
 
     P_wf_list=[]
     K_list=[]
+    GP_area_list=[]
 
     for l in range(0,600,50):
-        A=get_area(200,l)
+        A=get_area(200,l)/2
         A_list.append(A)
         print(A)
 
@@ -464,14 +465,14 @@ if __name__ =="__main__":
         '''
         设定排采时间，动态预测
         '''
-        for i in range(7200):
+        for i in range(4800):
             '''
             排水，根据井底流压计算排水量
             '''
             if P_wf > GP.P_wf:
-                q_w=GP.q_wi*2
+                q_w=GP.q_wi
             else:
-                q_w=GP.get_water_prediction(P,k_w,P_wf,K)*2
+                q_w=GP.get_water_prediction(P,k_w,P_wf,K)
             W_p = W_p + q_w
             '''
             计算含水饱和度
@@ -482,7 +483,7 @@ if __name__ =="__main__":
             计算压力
             '''
             if P > GP.P_cd:
-                P=GP.get_P_1( S_w, Z, phi, G_p)
+                P=GP.get_P_2( S_w, Z, phi, G_p)
 
             else:
                 P = GP.get_P_2(S_w, Z, phi, G_p)
@@ -525,12 +526,13 @@ if __name__ =="__main__":
             if P > GP.P_cd:
                 q_g=0
             else:
-                q_g = GP.get_gas_prediction(P,k_g,Z,P_wf,K)*2
+                q_g = GP.get_gas_prediction(P,k_g,Z,P_wf,K)
 
             G_p = G_p + q_g
 
         i_list.append(l)
-        G_P_list.append(G_p/2)
+        G_P_list.append(G_p)
+        GP_area_list.append(G_p/A)
     # print(i_list)
     print(G_P_list)
 
@@ -540,14 +542,15 @@ if __name__ =="__main__":
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
 
     ax1 = fig.add_subplot(2, 2, 1)
-    ax1.set_title('产气量', fontproperties=font)
+    ax1.set_title('累计产气量', fontproperties=font)
     plt.scatter(i_list, G_P_list, marker='x', color='red', s=10, label='First')
 
     ax2 = fig.add_subplot(2, 2, 2)
     ax2.set_title('面积', fontproperties=font)
     plt.scatter(i_list, A_list, marker='x', color='red', s=10, label='First')
 
+    ax3 = fig.add_subplot(2, 2, 3)
+    ax3.set_title('单位面积累计产气量', fontproperties=font)
+    plt.scatter(i_list, GP_area_list, marker='x', color='red', s=10, label='First')
+
     plt.show()
-
-
-

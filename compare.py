@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import numpy as np
 from sympy import *
 from matplotlib import pyplot as plt
@@ -8,27 +9,27 @@ from matplotlib.font_manager import FontProperties
 class Gas_prediction():
     def __init__(self,A):
         self.P_L = 4 # Langmuir 压力系数，Mpa
-        self.P_cd = 3.5  # 临界解吸压力
+        self.P_cd = 4.5  # 临界解吸压力
         self.V_L = 24.75  # Langmuir 体积系数，m^3/t
         self.P_i = 6  # 初始压力，Mpa
         self.A = A    # 供气面积，m^2
         self.h = 15 # 煤厚,m
         self.phi_i = 0.01  # 初始孔隙度
-        self.K_i=2     #初始渗透率
+        self.K_i=2    #初始渗透率
         self.rho_B = 1.45  # 煤密度，t/m^3
         self.S_wi = 0.95  # 初始含水饱和度
         self.B_W = 1  # 水的地层体积系数
         self.T = 313  # 温度，K
         self.P_wf = 1 # 井底流压
         self.mu_g = 0.01  # 气体粘度，mPa/s
-        self.r_e = 200  # 泄流半径，m
+        self.r_e = 150  # 泄流半径，m
         self.r_w = 0.1  # 井筒半径，m
         self.s = -1  # 表皮系数
         self.mu_w = 0.6#水的粘度系数
         self.P_sc = 0.1013#标准压力，Mpa
         self.T_sc = 289#标准温度，K
         self.Z_sc = 1#标准压缩系数
-        self.q_wi = 2.5#初始排水量，m^3
+        self.q_wi = 1#初始排水量，m^3
         self.Z_i = self.get_z(self.P_i ,self.T , 0.8)
         self.G = self.A * self.h * self.rho_B * self.V_L * (self.P_cd / (self.P_cd + self.P_L))
         self.G_f = self.A * self.h * self.phi_i * (1 - self.S_wi) * (self.P_i * self.Z_sc * self.T_sc / (self.Z_i * self.T * self.P_sc))
@@ -165,8 +166,7 @@ class Gas_prediction():
         return k_rg,k_rw
 
 
-
-    def get_gas_prediction(self,P,k_g,Z,P_wf,K):
+    def get_gas_prediction(self,P,k_g,Z,P_wf,K,l):
         '''
         气体产能计算
         :param P:压力
@@ -177,11 +177,13 @@ class Gas_prediction():
         :return:q_g，日产气量，m^3
         '''
         q_g=774.6*K*k_g*self.h*(P**2-P_wf**2)/(self.T*self.mu_g*Z*( np.log(self.r_e/self.r_w)-0.75+self.s ))
-        # q_g=1000*k_g*K*self.h*(P**2-P_wf**2)/(1.31*self.T*self.mu_g*Z*( np.log(self.r_e/self.r_w)-0.75+self.s ))
-
+        # if l >=400:
+        #     q_g=1000*k_g*self.h*(P**2-P_wf**2)/(1.31*self.T*self.mu_g*Z*( np.log(self.r_e/self.r_w)-0.75+self.s ))
+        # else:
+        #     q_g=1000*k_g*self.h*(P**2-P_wf**2)/(0.6455*self.T*self.mu_g*Z*(np.log(1.12*3.1415926*self.r_e**2/(0.05*0.5*l*self.r_w))))
         return q_g
 
-    def get_water_prediction(self,P,k_w,P_wf,K):
+    def get_water_prediction(self,P,k_w,P_wf,K,l):
         '''
         产水量计算
         :param P:
@@ -190,10 +192,10 @@ class Gas_prediction():
         :param K:
         :return: q_w，日产水量，m^3
         '''
-        q_w=0.543*k_w*K*self.h*(P-P_wf)/(self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s ))
+        q_w=0.543*k_w*K*self.h*(P-P_wf)/(self.B_W*self.mu_w*( np.log(self.r_e/(self.r_w))-0.75+self.s ))
         return q_w
 
-    def get_P_wf(self, P,k_w,K):
+    def get_P_wf(self, P,k_w,K,l):
         '''
         计算井底流压，根据产水量计算公式反推
         :param P:
@@ -202,117 +204,112 @@ class Gas_prediction():
         :param S_w:
         :return:
         '''
-        P_wf=P-(self.q_wi*self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s )/(0.543*k_w*K*self.h))
+        P_wf=P-(self.q_wi*self.B_W*self.mu_w*( np.log(self.r_e/(self.r_w))-0.75+self.s )/(0.543*k_w*K*self.h))
         return P_wf
 
-    # def m(self,P_in,Z):
-    #     m_p=P_in**2/( self.mu_g*Z)
-    #     return m_p
-    # def get_gas_prediction(self,P,k_g,Z,P_wf):
-    #     P=P*145.0377439
-    #     P_wf=P_wf*145.0377439
-    #     h = self.h * 3.3
-    #     m_p=self.m(P,Z)
-    #     m_P_wf=self.m(P_wf,Z)
-    #     q_g=( k_g*h*(m_p-m_P_wf))/( 1422*self.T*(  np.log(self.r_e/self.r_w)-0.75+self.s  ) )*1000
-    #     q_g=0.0283168*q_g
-    #     return q_g
 
-if __name__=="__main__":
-    GP = Gas_prediction(40000*3.1415926)
 
+def get_area(r,l):
+    if l <= 2*r:
+        theta=np.arccos(l/(2*r))* 180 / np.pi
+        area=3.1415926*r**2*2-2*(3.1415926*r**2*2*theta/360-(l*r*np.sin(theta*np.pi/180))/2)
+    else:
+        area=3.1415926*r**2*2
+
+    return area
+
+def run(GP,n,l):
     '''
-    定义列表，存放结果
-    '''
-    q_g_list=[]
-    q_w_list=[]
-    P_list=[]
-    i_list=[]
-    Z_list=[]
-    phi_list=[]
-    S_w_list=[]
-    G_P_list=[]
-    P_wf_list=[]
-    K_list=[]
-    Kg_list=[]
+       定义列表，存放结果
+       '''
+    q_g_list = []
+    q_w_list = []
+    P_list = []
+    i_list = []
+    Z_list = []
+    phi_list = []
+    S_w_list = []
+    G_P_list = []
+    P_wf_list = []
+    K_list = []
 
     '''
     定义初始参数
     '''
-    P=GP.P_i
-    W_p=0
-    G_p=0
+    P = GP.P_i
+    W_p = 0
+    G_p = 0
     Z = GP.Z_i
     phi = GP.phi_i
-    K=GP.K_i
-    S_w =GP.S_wi
+    K = GP.K_i
+    S_w = GP.S_wi
     k_g, k_w = GP.get_k_rg_k_rw(S_w)
-    P_wf = GP.get_P_wf( P,k_w,K)
+    P_wf = GP.get_P_wf(P, k_w, K,l)
     '''
     设定排采时间，动态预测
     '''
-    for i in range(7200):
-        print(i+1)
-        i_list.append(i)
+    for i in range(1000):
+        print(i + 1)
+        i_list.append(i * 10)
         '''
         排水，根据井底流压计算排水量
         '''
         if P_wf > GP.P_wf:
-
-            q_w=GP.q_wi
+            # q_w = GP.get_water_prediction(P, k_w, P_wf, K) * 10 * n
+            q_w = GP.q_wi * 10 * n
         else:
-            q_w=GP.get_water_prediction(P,k_w,P_wf,K)
-        q_w_list.append(q_w)
+            q_w = GP.get_water_prediction(P, k_w, P_wf, K,l) * 10 * n
+        q_w_list.append(q_w / (10*n))
         print('q_w:', q_w)
         W_p = W_p + q_w
         '''
         计算含水饱和度
         '''
-        S_w = GP.get_S_w(W_p,phi)
+        S_w = GP.get_S_w(W_p, phi)
         S_w_list.append(S_w)
         print('S_w:', S_w)
 
         '''
         计算压力
         '''
-        if P > GP.P_cd:
-            P=GP.get_P_1( S_w, Z, phi, G_p)
+        if P >= GP.P_cd:
+            P = GP.get_P_1(S_w, Z, phi, G_p)
         else:
             P = GP.get_P_2(S_w, Z, phi, G_p)
         P_list.append(P)
-        print('P:',P)
+        print('P:', P)
 
         '''
         计算气体压缩因子
         '''
-        Z = GP.get_z(P,GP.T,0.8)
+        Z = GP.get_z(P, GP.T, 0.7)
         Z_list.append(Z)
-        print('Z:',Z)
+        print('Z:', Z)
 
         '''
         计算孔隙度
         '''
-        phi=GP.get_phi(P)
+        phi = GP.get_phi(P)
         phi_list.append(phi)
-        print('phi:',phi)
+        print('phi:', phi)
 
         '''
         计算渗透率
         '''
-        K=GP.get_K(phi)
+        K = GP.get_K(phi)
         K_list.append(K)
 
         '''
         计算气水相渗透率
         '''
-        k_g, k_w=GP.get_k_rg_k_rw(S_w)
+        k_g, k_w = GP.get_k_rg_k_rw(S_w)
 
         '''
         计算井底流压，若井底流压小于设定值，则认为当前井底流压为设定值
         '''
         if P_wf > GP.P_wf:
+            P_wf = GP.get_P_wf(P, k_w, K,l)
             # P_wf = GP.P_wf
-            P_wf = GP.get_P_wf(P, k_w, K)
         else:
             P_wf = GP.P_wf
         P_wf_list.append(P_wf)
@@ -321,49 +318,40 @@ if __name__=="__main__":
         根据当前压力，判断排采阶段，计算产气量
         '''
         if P > GP.P_cd:
-            # q_g=GP. get_gas_prediction_level_1( P, phi, S_w, Z,G_p)
-            q_g=0
+            q_g = 0
         else:
-            q_g = GP.get_gas_prediction(P,k_g,Z,P_wf,K)
-        q_g_list.append(q_g)
-        print('q_g:',q_g)
+            q_g = GP.get_gas_prediction(P, k_g, Z, P_wf, K,l) * 10 * n
+        q_g_list.append(q_g / (10*n))
+        print('q_g:', q_g)
         G_p = G_p + q_g
         G_P_list.append(G_p)
-        print('G_p',G_p)
+        print('G_p', G_p)
+    return i_list,q_g_list
 
-        Kg_list.append(K*k_g)
 
-    #
-    # print('G_p/G_i',G_p/GP.G_i)
+if __name__=="__main__":
 
-    '''
-    结果可视化
-    '''
-    fig = plt.figure()
+
+    # GP_1 = Gas_prediction(40000*3.1415926)
+
+    L1=400
+    L2=200
+
+    GP_1 = Gas_prediction(3.1415926*22500)
+    # GP_1 = Gas_prediction(get_area(200,L1)/2)
+    GP_2=Gas_prediction(get_area(150,L2)/2)
+
+
+    i_list1, q_g_list1 = run(GP_1, 1,L1)
+    # i_list2, q_g_list2=run(GP_2,1,200)
+    i_list2, q_g_list2 = run(GP_2, 1, L2)
+
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
+    plt.scatter(i_list1, q_g_list1, marker='x', color='red', s=2, label='单井，供气半径200')
+    plt.scatter(i_list2, q_g_list2, marker='o', color='blue', s=2, label='两口井,供气半径200，井间距{}'.format(L2))
+    plt.title('井间干扰对比结果',fontproperties=font)
+    plt.legend(prop =font)
 
-    ax1 = fig.add_subplot(3, 2, 1)
-    ax1.set_title('日产水量', fontproperties=font)
-    plt.scatter(i_list, q_w_list, marker='x', color='red', s=2, label='First')
-
-    ax2 = fig.add_subplot(3, 2, 2)
-    ax2.set_title('日产气量', fontproperties=font)
-    plt.scatter(i_list, q_g_list, marker='o', color='red', s=2, label='First')
-
-    ax3 = fig.add_subplot(3, 2, 3)
-    ax3.set_title('压力', fontproperties=font)
-    plt.scatter(i_list, P_list, marker='x', color='blue', s=2, label='First')
-
-    ax4 = fig.add_subplot(3, 2, 4)
-    ax4.set_title('Z', fontproperties=font)
-    plt.scatter(i_list, Z_list, marker='x', color='red', s=2, label='First')
-
-    ax5 = fig.add_subplot(3, 2, 5)
-    ax5.set_title('井底流压', fontproperties=font)
-    plt.scatter(i_list, P_wf_list, marker='x', color='red', s=2, label='First')
-
-    ax6 = fig.add_subplot(3, 2,6)
-    ax6.set_title('有效渗透率', fontproperties=font)
-    plt.scatter(i_list, Kg_list, marker='x', color='red', s=2, label='First')
+    plt.grid()
     plt.show()
 

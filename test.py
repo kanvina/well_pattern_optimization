@@ -180,7 +180,8 @@ class Gas_prediction():
         :param K:渗透率
         :return:q_g，日产气量，m^3
         '''
-        q_g=774.6*K*k_g*self.h*(P**2-P_wf**2)/(self.T*self.mu_g*Z*( np.log(self.r_e/self.r_w)-0.75+self.s ))
+        # q_g=774.6*K*k_g*self.h*(P**2-P_wf**2)/(self.T*self.mu_g*Z*( np.log(self.r_e/self.r_w)-0.75+self.s ))
+        q_g=1000*k_g*self.h*(P**2-P_wf**2)/(1.31*self.T*self.mu_g*Z*( np.log(self.r_e/self.r_w)-0.75+self.s ))
         return q_g
 
     def get_water_prediction(self,P,k_w,P_wf,K):
