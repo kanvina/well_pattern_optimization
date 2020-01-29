@@ -3,10 +3,11 @@ create by WYD
 2019 10 25
 井网构造实验
 1- 构造原始井网单元
-2- 横向与纵向缩放，因子：x_zoom,y_zoom
-3- 横向与纵向平移：因子：Delta_x,Delta_y
-4- 井网单元形状改变，因子：夹角theta
-5- 井网单元旋转，因子：gamma
+2- 横向与纵向井距，因子：x,y
+3- 横向与纵向平移，因子：Delta_x，
+4- 井网单元形状改变，因子：夹角theta，Delta_y
+5- 旋转，因子：gamma
+
 '''
 
 import numpy as np
@@ -16,148 +17,111 @@ from matplotlib import pyplot as plt
 
 class well_grid_class():
 
-    def __init__(self):
+    def __init__(self,grid_info):
 
-        self.cell_len = 100  #原始井组边长
-        self.x_zoom = 1      #横轴缩放因子
-        self.y_zoom = 1      #纵轴缩放因子
-        self.theta = 90      #井组夹角
-        self.gamma = 45      #旋转角度
-        self.Delta_x = 50    #横轴移动因子
-        self.Delta_y = 50    #纵轴移动因子
+        self.x = grid_info['x']      #横轴缩放因子
+        self.y= grid_info['y']        #纵轴缩放因子
+        self.theta = grid_info['theta']        #井组夹角
+        self.Delta_x = grid_info['Delta_x']      #横轴移动因子
+        self.Delta_y = grid_info['Delta_y']      #纵轴移动因子
+        self.gamma=grid_info['gamma']
 
-    # def init_five_cell(self):
-    #
-    #     x_cell_len=self.cell_len*self.x_zoom
-    #     y_cell_len=self.cell_len*self.y_zoom
-    #
-    #     angle_a= (np.arctan( (np.cos(self.theta*np.pi/180)+(y_cell_len/x_cell_len) )/np.sin(self.theta*np.pi/180)))*180/np.pi
-    #     angle_b=180-self.theta-angle_a
-    #     angle_c=angle_a-90+self.theta-self.gamma
-    #     diagonal_line_len = y_cell_len*np.sin(angle_a*np.pi/180)+x_cell_len*np.sin(angle_b*np.pi/180)
-    #
-    #     point_LD_location=[self.center_location[0]-(self.cell_len/2)+self.Delta_x,self.center_location[1]-(self.cell_len/2)+self.Delta_y]
-    #     point_LT_location=[y_cell_len*np.cos((self.theta-self.gamma)*np.pi/180)+point_LD_location[0],y_cell_len*np.sin((self.theta-self.gamma)*np.pi/180)+point_LD_location[1]]
-    #     point_RT_location=[ diagonal_line_len*np.cos(angle_c*np.pi/180)+point_LD_location[0],diagonal_line_len*np.sin(angle_c*np.pi/180)+point_LD_location[1]  ]
-    #     point_RD_location=[ x_cell_len*np.cos(self.gamma*np.pi/180)+point_LD_location[0],point_LD_location[1]-x_cell_len*np.sin(self.gamma*np.pi/180) ]
-    #     point_center_location=[ 0.5*diagonal_line_len*np.cos((angle_a+self.theta-self.gamma-90)*np.pi/180)+point_LD_location[0],0.5*diagonal_line_len*np.sin((angle_a+self.theta-self.gamma-90)*np.pi/180)+point_LD_location[1] ]
-    #
-    #     return [point_LD_location,point_LT_location,point_RT_location,point_RD_location,point_center_location]
-
-    def grid_rotate(self,grid_center_point_location, point):
+    def grid_rotate(self, grid_center_point_location, point):
         '''
         井网旋转函数
         :param grid_center_point_location: 旋转中心点
         :param point: 待旋转点
         :return:
         '''
-        #待旋转点与中心点距离
+        # 待旋转点与中心点距离
         distance = ((point[1] - grid_center_point_location[1]) ** 2 + (
-                    point[0] - grid_center_point_location[0]) ** 2) ** 0.5
-        if distance==0:
-            distance=1
+                point[0] - grid_center_point_location[0]) ** 2) ** 0.5
+        if distance == 0:
+            distance = 1
         try:
             # 第三象限
-            if point[1] - grid_center_point_location[1]<=0 and point[0] - grid_center_point_location[0]<=0:
-                angle= np.arcsin(np.abs(point[1] - grid_center_point_location[1])/distance)* 180 / np.pi+180
+            if point[1] - grid_center_point_location[1] <= 0 and point[0] - grid_center_point_location[0] <= 0:
+                angle = np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi + 180
             # 第一象限
-            elif point[1] - grid_center_point_location[1]>=0 and point[0] - grid_center_point_location[0]>=0:
-                angle= np.arcsin(np.abs(point[1] - grid_center_point_location[1])/distance)* 180 / np.pi
+            elif point[1] - grid_center_point_location[1] >= 0 and point[0] - grid_center_point_location[0] >= 0:
+                angle = np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi
             # 第二象限
-            elif point[1] - grid_center_point_location[1]>=0 and point[0] - grid_center_point_location[0]<=0:
-                angle= 180-np.arcsin(np.abs(point[1] - grid_center_point_location[1])/distance)* 180 / np.pi
+            elif point[1] - grid_center_point_location[1] >= 0 and point[0] - grid_center_point_location[0] <= 0:
+                angle = 180 - np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi
             # 第四象限
-            elif point[1] - grid_center_point_location[1]<=0 and point[0] - grid_center_point_location[0]>=0:
-                angle= -np.arcsin(np.abs(point[1] - grid_center_point_location[1])/distance)* 180 / np.pi
+            elif point[1] - grid_center_point_location[1] <= 0 and point[0] - grid_center_point_location[0] >= 0:
+                angle = -np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi
         except:
-            print(point,"点旋转出现异常")
-        point_rotate_location = [distance * np.cos((angle -self.gamma)*np.pi/180)+grid_center_point_location[0],
-                                 distance * np.sin((angle -self.gamma)*np.pi/180)+grid_center_point_location[1]]
-
-
+            print(point, "点旋转出现异常")
+        point_rotate_location = [distance * np.cos((angle - self.gamma) * np.pi / 180) + grid_center_point_location[0],
+                                 distance * np.sin((angle - self.gamma) * np.pi / 180) + grid_center_point_location[1]]
 
         return point_rotate_location
 
-    def create_five_well_grid(self,range_x,range_y):
-        '''
-        创建五点式井网
-        :param range_x: 横轴矩形范围
-        :param range_y: 纵轴矩形范围
-        :return:
-        '''
+    def create_rhombus_well_grid(self,range_x,range_y):
+        grid_len = 1.4 * max(range_x[1] - range_x[0], range_y[1] - range_y[0])+2*max(self.x,self.y)
+
+        center_location = [ self.Delta_x+(range_x[1] + range_x[0]) / 2, self.Delta_y+(range_y[1] + range_y[0]) / 2]
+        range_x = [center_location[0] - grid_len / 2, center_location[0] + grid_len / 2]
+        range_y = [center_location[1] - grid_len / 2, center_location[1] + grid_len / 2]
+
         x_num=0
         y_num=0
-        x_len=self.cell_len*self.x_zoom
-        y_len=self.cell_len*self.y_zoom*np.sin(self.theta*np.pi/180)
+        x_len=self.x
+        y_len=self.y
         points_array={}
-        while y_num*y_len*np.sin(self.theta*np.pi/180)+range_y[0]<=range_y[1]:
-            points_array[y_num]=[]
 
-            while x_len*x_num+ range_x[0]<=(range_x[1]+self.cell_len*self.x_zoom):
+        while y_num * y_len * np.sin(self.theta * np.pi / 180) + range_y[0] <= range_y[1]:
+            points_array[y_num] = []
 
-                if y_num ==0:
+            while x_len * x_num + range_x[0] <= (range_x[1] + x_len):
 
-                    point_LT_location=[y_len*np.cos(self.theta*np.pi/180)+x_num*x_len+range_x[0],y_len*np.sin(self.theta*np.pi/180)+range_y[0]]
-                    point_center_location=[ (x_num+0.5)*x_len+0.5*y_len*np.cos(self.theta*np.pi/180)+range_x[0],0.5*y_len*np.sin(self.theta*np.pi/180)+range_y[0] ]
-                    points_array[y_num].append([y_num,x_num,point_LT_location,point_center_location])
-                    x_num=x_num+1
+                if y_num == 0:
+
+                    point_LT_location = [y_len * np.cos(self.theta * np.pi / 180) + x_num * x_len + range_x[0],
+                                         y_len * np.sin(self.theta * np.pi / 180) + range_y[0]]
+                    points_array[y_num].append([y_num, x_num, point_LT_location])
+                    x_num = x_num + 1
 
                 else:
 
-                    later_start_x=points_array[y_num-1][0][2][0]
-                    start_x_location=later_start_x-(np.floor((later_start_x-range_x[0])/x_len)+1)*x_len
-                    point_LT_location = [start_x_location+y_len * np.cos(self.theta * np.pi / 180) + x_num * x_len,
-                                         y_len * np.sin(self.theta * np.pi / 180)+y_num*y_len*np.sin(self.theta*np.pi/180)+range_y[0]]
-                    point_center_location = [start_x_location+(x_num + 0.5) * x_len + 0.5 * y_len * np.cos(self.theta * np.pi / 180),
-                                             0.5 * y_len * np.sin(self.theta * np.pi / 180)+y_num*y_len*np.sin(self.theta*np.pi/180)+range_y[0]]
-                    points_array[y_num].append([y_num, x_num, point_LT_location, point_center_location])
-                    x_num=x_num+1
+                    later_start_x = points_array[y_num - 1][0][2][0]
+                    start_x_location = later_start_x - (np.floor((later_start_x - range_x[0]) / x_len) + 1) * x_len
+                    point_LT_location = [start_x_location + y_len * np.cos(self.theta * np.pi / 180) + x_num * x_len,
+                                         y_len * np.sin(self.theta * np.pi / 180) + y_num * y_len * np.sin(
+                                             self.theta * np.pi / 180) + range_y[0]]
+                    points_array[y_num].append([y_num, x_num, point_LT_location])
+                    x_num = x_num + 1
             else:
-                y_num=y_num+1
-                x_num=0
+                y_num = y_num + 1
+                x_num = 0
         else:
             pass
 
-        grid_center_point_location=[(range_x[1]+range_x[0])/2,(range_y[1]+range_y[0])/2]
+        grid_center_point_location = [(range_x[1] + range_x[0]) / 2, (range_y[1] + range_y[0]) / 2]
 
         for points_row in points_array:
             points_line = points_array[points_row]
             for point in points_line:
                 point_LT = point[2]
-                point_LT_rotate=self.grid_rotate(grid_center_point_location, point_LT)
-                point[2]=[point_LT_rotate[0]+self.Delta_x,point_LT_rotate[1]+self.Delta_y]
-
-                point_center = point[3]
-                point_center_rotate=self.grid_rotate(grid_center_point_location, point_center)
-                point[3]=[point_center_rotate[0]+self.Delta_x, point_center_rotate[1]+self.Delta_y]
-
+                point_LT_rotate = self.grid_rotate(grid_center_point_location, point_LT)
+                point[2] = [point_LT_rotate[0] , point_LT_rotate[1]]
         return points_array
 
 def draw_scatter(points_array,xlim,ylim):
-    for point in points_array:
-        point_location=point[1]
-        if point[0]==0:
-            plt.scatter(point_location[0], point_location[1], marker='o', color='red', s=40, label='First')
-        else:
-            plt.scatter(point_location[0], point_location[1], marker='x', color='red', s=40, label='First')
+    for point_location in points_array:
 
 
+        plt.scatter(point_location[0], point_location[1], marker='o', color='red', s=5, label='First')
+    plt.plot([xlim[0],xlim[1],xlim[1],xlim[0],xlim[0]],[ylim[0],ylim[0],ylim[1],ylim[1],ylim[0]])
+        # plt.xlim(xlim)
+        # plt.ylim(ylim)
     plt.show()
 
-def main():
-    grid=well_grid_class()
-    grid.cell_len = 100
-    grid.x_zoom = 1.2
-    grid.y_zoom = 5
-    grid.theta = 20
-    grid.gamma = 0
-    grid.Delta_x =0
-    grid.Delta_y = 0
+def create_grid(grid_info,range_x,range_y,compute_range_x,compute_range_y):
 
-    range_x=[-500,1500]
-    range_y=[-500,1500]
-    points_array=grid.create_five_well_grid(range_x,range_y)
-
+    grid=well_grid_class(grid_info)
+    points_array=grid.create_rhombus_well_grid(range_x,range_y)
 
     well_points_array=[]
 
@@ -165,22 +129,44 @@ def main():
         points_line = points_array[points_row]
         for point in points_line:
             point_LT = point[2]
-            well_points_array.append([0,point_LT])
-            point_center = point[3]
-            well_points_array.append([1,point_center])
+            if point_LT[0]>=compute_range_x[0] and point_LT[0]<=compute_range_x[1] and point_LT[1] >=compute_range_y[0] and point_LT[1] <=compute_range_y[1]:
+                well_points_array.append(point_LT)
 
     return well_points_array
 
-
-
-
+def get_cell_value(data_array,x_range,y_range,cell_len,location):
+    row=int( np.floor((y_range[1]-location[1])/cell_len))
+    column=int(np.floor( (location[0]-x_range[0])/cell_len ))
+    point_value=data_array[row,column]
+    return point_value
 
 
 if __name__=="__main__":
-    well_points_array=main()
-    xlim=[0,1000]
-    ylim=[0,1000]
-    draw_scatter(well_points_array,xlim,ylim)
+    grid_info={
+        'x':300,
+        'y':300,
+        'theta':30,
+        'Delta_x':100,
+        'Delta_y':100,
+        'gamma':45
+    }
+    range_x=[623935,629935]
+    range_y=[3959412,3965412]
+
+    compute_range_x=[624935,628935]
+    compute_range_y=[3960412,3964412]
+
+    well_points_array=create_grid(grid_info,range_x,range_y,compute_range_x,compute_range_y)
+    #
+    # data_array=np.array(pd.read_csv('data/data_CBM_info.csv',header=None))
+
+
+
+
+    draw_scatter(well_points_array,range_x,range_y)
+
+
+
 
 
 
