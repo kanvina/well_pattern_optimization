@@ -237,6 +237,9 @@ def run(well_info,time):
     P_wf_list=[]
     K_list=[]
     Kg_list=[]
+    W_p_list=[]
+    K_rg_list=[]
+    K_rw_list=[]
 
     '''
     定义初始参数
@@ -267,6 +270,7 @@ def run(well_info,time):
             q_w=GP.get_water_prediction(P,k_w,P_wf,K)*10
         if i % test_step == 0:
             q_w_list.append(q_w/10)
+            W_p_list.append(W_p)
         # print('q_w:', q_w/10)
         W_p = W_p + q_w
         '''
@@ -315,6 +319,9 @@ def run(well_info,time):
         计算气水相渗透率
         '''
         k_g, k_w=GP.get_k_rg_k_rw(S_w)
+        if i % test_step == 0:
+            K_rg_list.append(k_g)
+            K_rw_list.append(k_w)
 
         '''
         计算井底流压，若井底流压小于设定值，则认为当前井底流压为设定值
@@ -379,10 +386,10 @@ def run(well_info,time):
     # plt.scatter(i_list, Kg_list, marker='x', color='red', s=2, label='First')
     # plt.show()
 
-    plt.plot(i_list, P_list, marker='o', mec='blue',  lw=1,ms=2,label='日产水量')
+    plt.plot(i_list, K_rg_list, marker='o', mec='blue',  lw=1,ms=2,label='气相对渗透率')
     # plt.plot(i_list, max_list, marker='o', mec='red',  lw=1,ms=5,label='种群最优值')
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
-    plt.title('水产能预测', fontproperties=font)
+    plt.title('气相对渗透率', fontproperties=font)
     plt.legend(prop=font)
     plt.show()
 

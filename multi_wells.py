@@ -8,14 +8,14 @@ from matplotlib.font_manager import FontProperties
 class Gas_prediction():
     def __init__(self,A):
         self.P_L = 4 # Langmuir 压力系数，Mpa
-        self.P_cd = 4.5  # 临界解吸压力
+        self.P_cd = 3.5  # 临界解吸压力
         self.V_L = 24.75  # Langmuir 体积系数，m^3/t
         self.P_i = 6  # 初始压力，Mpa
         self.A = A    # 供气面积，m^2
-        self.h = 6 # 煤厚,m
+        self.h = 15 # 煤厚,m
         self.phi_i = 0.01  # 初始孔隙度
         self.K_i=2     #初始渗透率
-        self.rho_B = 1.45  # 煤密度，t/m^3
+        self.rho_B = 1.58  # 煤密度，t/m^3
         self.S_wi = 0.95  # 初始含水饱和度
         self.B_W = 1  # 水的地层体积系数
         self.T = 313  # 温度，K
@@ -160,8 +160,8 @@ class Gas_prediction():
         :param S_w: 含水饱和度
         :return:
         '''
-        k_rg=(1-S_w)**1.25
-        k_rw=S_w**5
+        k_rg=(1-S_w)**1.1
+        k_rw=S_w**2.5
         return k_rg,k_rw
 
     def get_gas_prediction(self,P,k_g,Z,P_wf,K):
@@ -228,11 +228,13 @@ if __name__ =="__main__":
     GP_area_list=[]
 
     profit_list=[]
+    price_in_list=[]
+    price_out_list=[]
 
-    well_price=1800000
+    well_price=6000000
 
 
-    for l in range(100,410,50):
+    for l in range(200,410,20):
         A=l**2
         A_list.append(A)
 
@@ -253,7 +255,7 @@ if __name__ =="__main__":
         '''
         设定排采时间，动态预测
         '''
-        for i in range(4800):
+        for i in range(7200):
             '''
             排水，根据井底流压计算排水量
             '''
@@ -318,13 +320,19 @@ if __name__ =="__main__":
 
 
 
-        i_list.append(l)
+        i_list.append(l**2)
         G_P_list.append(G_p)
 
-        GP_area_list.append(G_p/A)
+        GP_area_list.append(G_p*1000000/A)
+        price_in=(1000000/A)*G_p*0.95*1.44
+        price_in_list.append(price_in)
 
-        profit = G_p * 0.95 - well_price
-        profit_list.append(profit/(A))
+        price_out=(1000000/A)*well_price
+        price_out_list.append(price_out)
+
+        profit =1000000*( G_p * 0.95*1.44 - well_price)/A
+        # profit=G_p * 0.95*1.44-well_price
+        profit_list.append(profit)
 
         print('井间距：',l,'采收率：', G_p / GP.G)
     # print(i_list)
@@ -332,20 +340,13 @@ if __name__ =="__main__":
     print('单井单位面积利润列表：',profit_list)
 
 
-
-    fig = plt.figure()
+    plt.plot(i_list, profit_list, marker='o', mec='red',  lw=1,ms=2,label='井网利润')
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
-
-    ax1 = fig.add_subplot(2, 2, 1)
-    ax1.set_title('累计产气量', fontproperties=font)
-    plt.scatter(i_list, G_P_list, marker='x', color='red', s=10, label='First')
-
-    ax2 = fig.add_subplot(2, 2, 2)
-    ax2.set_title('面积', fontproperties=font)
-    plt.scatter(i_list, A_list, marker='x', color='red', s=10, label='First')
-
-    ax3 = fig.add_subplot(2, 2, 3)
-    ax3.set_title('单井单位面积利润（万元）', fontproperties=font)
-    plt.scatter(i_list, profit_list, marker='x', color='red', s=10, label='First')
+    # plt.title('单井收入', fontproperties=font)
+    plt.legend(prop=font)
+    # plt.gca().invert_xaxis()
 
     plt.show()
+
+
+

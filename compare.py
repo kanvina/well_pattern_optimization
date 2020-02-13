@@ -9,7 +9,7 @@ from matplotlib.font_manager import FontProperties
 class Gas_prediction():
     def __init__(self,A):
         self.P_L = 4 # Langmuir 压力系数，Mpa
-        self.P_cd = 4.5  # 临界解吸压力
+        self.P_cd = 3.5  # 临界解吸压力
         self.V_L = 24.75  # Langmuir 体积系数，m^3/t
         self.P_i = 6  # 初始压力，Mpa
         self.A = A    # 供气面积，m^2
@@ -29,7 +29,7 @@ class Gas_prediction():
         self.P_sc = 0.1013#标准压力，Mpa
         self.T_sc = 289#标准温度，K
         self.Z_sc = 1#标准压缩系数
-        self.q_wi = 1.5#初始排水量，m^3
+        self.q_wi = 2.5#初始排水量，m^3
         self.Z_i = self.get_z(self.P_i ,self.T , 0.8)
         self.G = self.A * self.h * self.rho_B * self.V_L * (self.P_cd / (self.P_cd + self.P_L))
         self.G_f = self.A * self.h * self.phi_i * (1 - self.S_wi) * (self.P_i * self.Z_sc * self.T_sc / (self.Z_i * self.T * self.P_sc))
@@ -161,8 +161,8 @@ class Gas_prediction():
         :param S_w: 含水饱和度
         :return:
         '''
-        k_rg=(1-S_w)**1.25
-        k_rw=S_w**5
+        k_rg=(1-S_w)**1.1
+        k_rw=S_w**2.5
         return k_rg,k_rw
 
 

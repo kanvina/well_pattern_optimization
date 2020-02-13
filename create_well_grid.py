@@ -108,14 +108,21 @@ class well_grid_class():
                 point[2] = [point_LT_rotate[0] , point_LT_rotate[1]]
         return points_array
 
+# def draw_scatter(points_array,xlim,ylim):
+#     for point_location in points_array:
+#         plt.scatter(point_location[0], point_location[1], marker='o', color='red', s=5, label='First')
+#     plt.plot([xlim[0],xlim[1],xlim[1],xlim[0],xlim[0]],[ylim[0],ylim[0],ylim[1],ylim[1],ylim[0]])
+#         # plt.xlim(xlim)
+#         # plt.ylim(ylim)
+#     plt.show()
+
 def draw_scatter(points_array,xlim,ylim):
     for point_location in points_array:
-
-
-        plt.scatter(point_location[0], point_location[1], marker='o', color='red', s=5, label='First')
-    plt.plot([xlim[0],xlim[1],xlim[1],xlim[0],xlim[0]],[ylim[0],ylim[0],ylim[1],ylim[1],ylim[0]])
-        # plt.xlim(xlim)
-        # plt.ylim(ylim)
+        plt.scatter((point_location[0]-xlim[0])/100, (point_location[1]-ylim[0])/100, marker='o', color='red', s=5, label='First')
+    # plt.plot([xlim[0],xlim[1],xlim[1],xlim[0],xlim[0]],[ylim[0],ylim[0],ylim[1],ylim[1],ylim[0]])
+    plt.xlim([0,(xlim[1]-xlim[0])/100])
+    plt.ylim([0,(ylim[1]-ylim[0])/100])
+    plt.axis('off')
     plt.show()
 
 def create_grid(grid_info,range_x,range_y,compute_range_x,compute_range_y):
@@ -129,7 +136,7 @@ def create_grid(grid_info,range_x,range_y,compute_range_x,compute_range_y):
         points_line = points_array[points_row]
         for point in points_line:
             point_LT = point[2]
-            if point_LT[0]>=compute_range_x[0] and point_LT[0]<=compute_range_x[1] and point_LT[1] >=compute_range_y[0] and point_LT[1] <=compute_range_y[1]:
+            if point_LT[0]>compute_range_x[0] and point_LT[0]<compute_range_x[1] and point_LT[1] >compute_range_y[0] and point_LT[1] <compute_range_y[1]:
                 well_points_array.append(point_LT)
 
     return well_points_array
@@ -143,25 +150,27 @@ def get_cell_value(data_array,x_range,y_range,cell_len,location):
 
 if __name__=="__main__":
     grid_info={
-        'x':300,
-        'y':300,
-        'theta':30,
-        'Delta_x':100,
-        'Delta_y':100,
-        'gamma':45
+        'x':200,
+        'y':200,
+        'theta':90,
+        'Delta_x':0,
+        'Delta_y':0,
+        'gamma':0
     }
     range_x=[623935,629935]
     range_y=[3959412,3965412]
 
-    compute_range_x=[624935,628935]
-    compute_range_y=[3960412,3964412]
+    compute_range_x=[623935,623935+6000]
+    compute_range_y=[3959412,3959412+6000]
 
     well_points_array=create_grid(grid_info,range_x,range_y,compute_range_x,compute_range_y)
+    print('well num:',len(well_points_array))
     #
     # data_array=np.array(pd.read_csv('data/data_CBM_info.csv',header=None))
 
-
-
+    data = np.array(pd.read_csv('data/IDW_解吸压力.csv', header=None))
+    plt.imshow(data)
+    # plt.colorbar(shrink=.83)
 
     draw_scatter(well_points_array,range_x,range_y)
 

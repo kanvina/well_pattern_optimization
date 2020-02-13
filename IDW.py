@@ -84,13 +84,13 @@ if __name__ =="__main__":
     path_point_xls='data/CBM_data.csv'
     cell_len = 100
     p=2
-    n=8
+    n=3
 
     data_IDW,data_range=main_IDW(path_point_xls, cell_len,n,p)
     print(data_IDW)
     print(data_range)
 
-    pd.DataFrame(data_IDW).to_csv('data/IDW_孔隙度.csv',index=0,header=0)
+    # pd.DataFrame(data_IDW).to_csv('data/IDW_孔隙度.csv',index=0,header=0)
 
     plt.imshow(data_IDW)
     plt.show()
