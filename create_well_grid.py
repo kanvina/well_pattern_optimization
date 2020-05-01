@@ -12,51 +12,19 @@ create by WYD
 
 import numpy as np
 import pandas as pd
-
 from matplotlib import pyplot as plt
+from matplotlib.font_manager import FontProperties
 
 class well_grid_class():
 
     def __init__(self,grid_info):
 
-        self.x = grid_info['x']      #横轴缩放因子
-        self.y= grid_info['y']        #纵轴缩放因子
-        self.theta = grid_info['theta']        #井组夹角
+        self.x = grid_info['x']                  #横向间距
+        self.y= grid_info['y']                   #纵向间距
+        self.theta = grid_info['theta']          #单元夹角
         self.Delta_x = grid_info['Delta_x']      #横轴移动因子
         self.Delta_y = grid_info['Delta_y']      #纵轴移动因子
-        self.gamma=grid_info['gamma']
-
-    def grid_rotate(self, grid_center_point_location, point):
-        '''
-        井网旋转函数
-        :param grid_center_point_location: 旋转中心点
-        :param point: 待旋转点
-        :return:
-        '''
-        # 待旋转点与中心点距离
-        distance = ((point[1] - grid_center_point_location[1]) ** 2 + (
-                point[0] - grid_center_point_location[0]) ** 2) ** 0.5
-        if distance == 0:
-            distance = 1
-        try:
-            # 第三象限
-            if point[1] - grid_center_point_location[1] <= 0 and point[0] - grid_center_point_location[0] <= 0:
-                angle = np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi + 180
-            # 第一象限
-            elif point[1] - grid_center_point_location[1] >= 0 and point[0] - grid_center_point_location[0] >= 0:
-                angle = np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi
-            # 第二象限
-            elif point[1] - grid_center_point_location[1] >= 0 and point[0] - grid_center_point_location[0] <= 0:
-                angle = 180 - np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi
-            # 第四象限
-            elif point[1] - grid_center_point_location[1] <= 0 and point[0] - grid_center_point_location[0] >= 0:
-                angle = -np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi
-        except:
-            print(point, "点旋转出现异常")
-        point_rotate_location = [distance * np.cos((angle - self.gamma) * np.pi / 180) + grid_center_point_location[0],
-                                 distance * np.sin((angle - self.gamma) * np.pi / 180) + grid_center_point_location[1]]
-
-        return point_rotate_location
+        self.gamma=grid_info['gamma']            #旋转角度
 
     def create_rhombus_well_grid(self,range_x,range_y):
         grid_len = 1.4 * max(range_x[1] - range_x[0], range_y[1] - range_y[0])+2*max(self.x,self.y)
@@ -108,22 +76,72 @@ class well_grid_class():
                 point[2] = [point_LT_rotate[0] , point_LT_rotate[1]]
         return points_array
 
-# def draw_scatter(points_array,xlim,ylim):
-#     for point_location in points_array:
-#         plt.scatter(point_location[0], point_location[1], marker='o', color='red', s=5, label='First')
-#     plt.plot([xlim[0],xlim[1],xlim[1],xlim[0],xlim[0]],[ylim[0],ylim[0],ylim[1],ylim[1],ylim[0]])
-#         # plt.xlim(xlim)
-#         # plt.ylim(ylim)
-#     plt.show()
+    def grid_rotate(self, grid_center_point_location, point):
+        '''
+        井网旋转函数
+        :param grid_center_point_location: 旋转中心点
+        :param point: 待旋转点
+        :return:
+        '''
+        # 待旋转点与中心点距离
+        distance = ((point[1] - grid_center_point_location[1]) ** 2 + (
+                point[0] - grid_center_point_location[0]) ** 2) ** 0.5
+        if distance == 0:
+            distance = 1
+        try:
+            # 第三象限
+            if point[1] - grid_center_point_location[1] <= 0 and point[0] - grid_center_point_location[0] <= 0:
+                angle = np.arcsin(np.abs(grid_center_point_location[1] - point[1]) / distance) * 180 / np.pi + 180
+            # 第一象限
+            elif point[1] - grid_center_point_location[1] >= 0 and point[0] - grid_center_point_location[0] >= 0:
+                angle = np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi
+            # 第二象限
+            elif point[1] - grid_center_point_location[1] >= 0 and point[0] - grid_center_point_location[0] <= 0:
+                angle = 180 - np.arcsin(np.abs(point[1] - grid_center_point_location[1]) / distance) * 180 / np.pi
+            # 第四象限
+            elif point[1] - grid_center_point_location[1] <= 0 and point[0] - grid_center_point_location[0] >= 0:
+                angle = 360-np.arcsin(np.abs(grid_center_point_location[1] - point[1]) / distance) * 180 / np.pi
+        except:
+            print(point, "点旋转出现异常")
+        angle_new=angle- self.gamma
+        if angle_new <0 :
+            point_rotate_location = [distance * np.cos((-angle_new) * np.pi / 180) + grid_center_point_location[0],
+                                     grid_center_point_location[1]-distance * np.sin((-angle_new )* np.pi / 180) ]
+        elif angle_new>0 and angle_new <90:
+            point_rotate_location = [distance * np.cos(angle_new * np.pi / 180) + grid_center_point_location[0],
+                                 distance * np.sin(angle_new * np.pi / 180) + grid_center_point_location[1]]
+        elif angle_new >90 and angle_new<180:
+            angle_new=180-angle_new
+            point_rotate_location = [  grid_center_point_location[0]-distance * np.cos(angle_new * np.pi / 180),
+                                     distance * np.sin(angle_new * np.pi / 180) + grid_center_point_location[1]]
+        elif angle_new >180 and angle_new<270:
+            angle_new = angle_new-180
+            point_rotate_location = [  grid_center_point_location[0]-distance * np.cos(angle_new * np.pi / 180),
+                                     -distance * np.sin(angle_new * np.pi / 180) + grid_center_point_location[1]]
+        else:
+            point_rotate_location = [distance * np.cos((-angle_new) * np.pi / 180) + grid_center_point_location[0],
+                                     grid_center_point_location[1] - distance * np.sin((-angle_new) * np.pi / 180)]
 
-def draw_scatter(points_array,xlim,ylim):
+
+        return point_rotate_location
+
+def draw_scatter(points_array,xlim,ylim,y_cell_num):
+
     for point_location in points_array:
-        plt.scatter((point_location[0]-xlim[0])/100, (point_location[1]-ylim[0])/100, marker='o', color='red', s=5, label='First')
-    # plt.plot([xlim[0],xlim[1],xlim[1],xlim[0],xlim[0]],[ylim[0],ylim[0],ylim[1],ylim[1],ylim[0]])
+        plt.scatter((point_location[0]-xlim[0])/100, (y_cell_num-(point_location[1]-ylim[0])/100), marker='o', color='red', s=2)
+        # plt.pause(0.1)
+
     plt.xlim([0,(xlim[1]-xlim[0])/100])
-    plt.ylim([0,(ylim[1]-ylim[0])/100])
-    plt.axis('off')
+    plt.ylim([(ylim[1]-ylim[0])/100,0])
+    # plt.axis('off')
+    font_set = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=12)
+    # plt.title(u'最佳布井方案变化',fontproperties=font_set)
+    plt.xticks(np.linspace(0,60,4),[0,2,4,6])
+    plt.yticks(np.linspace(0, 60, 4),[6,4,2,0])
+    # plt.xlabel('km')
+    # plt.ylabel('km')
     plt.show()
+
 
 def create_grid(grid_info,range_x,range_y,compute_range_x,compute_range_y):
 
@@ -136,7 +154,9 @@ def create_grid(grid_info,range_x,range_y,compute_range_x,compute_range_y):
         points_line = points_array[points_row]
         for point in points_line:
             point_LT = point[2]
-            if point_LT[0]>compute_range_x[0] and point_LT[0]<compute_range_x[1] and point_LT[1] >compute_range_y[0] and point_LT[1] <compute_range_y[1]:
+            if point_LT[0] > compute_range_x[0]  and point_LT[0] < compute_range_x[1] and point_LT[1] >compute_range_y[0] and point_LT[1] < compute_range_y[1] :
+            # if point_LT[0]>compute_range_x[0]+150 and point_LT[0]<compute_range_x[1]-150 and point_LT[1] >compute_range_y[0]+150 and point_LT[1] <compute_range_y[1]-150:
+
                 well_points_array.append(point_LT)
 
     return well_points_array
@@ -148,15 +168,30 @@ def get_cell_value(data_array,x_range,y_range,cell_len,location):
     return point_value
 
 
+def create_grid_show(grid_info, range_x, range_y, compute_range_x, compute_range_y,magin):
+    grid = well_grid_class(grid_info)
+    points_array = grid.create_rhombus_well_grid(range_x, range_y)
+
+    well_points_array = []
+
+    for points_row in points_array:
+        points_line = points_array[points_row]
+        for point in points_line:
+            point_LT = point[2]
+
+            if point_LT[0]>compute_range_x[0]+magin and point_LT[0]<compute_range_x[1]-magin and point_LT[1] >compute_range_y[0]+magin and point_LT[1] <compute_range_y[1]-magin:
+
+                well_points_array.append(point_LT)
+
+    return well_points_array
+
 if __name__=="__main__":
-    grid_info={
-        'x':200,
-        'y':200,
-        'theta':90,
-        'Delta_x':0,
-        'Delta_y':0,
-        'gamma':0
-    }
+    grid_info={'x': 350,
+               'y': 250,
+               'theta': 90,
+               'gamma': 0,
+               'Delta_x': 0,
+               'Delta_y': 0}
     range_x=[623935,629935]
     range_y=[3959412,3965412]
 
@@ -165,14 +200,18 @@ if __name__=="__main__":
 
     well_points_array=create_grid(grid_info,range_x,range_y,compute_range_x,compute_range_y)
     print('well num:',len(well_points_array))
-    #
-    # data_array=np.array(pd.read_csv('data/data_CBM_info.csv',header=None))
 
-    data = np.array(pd.read_csv('data/IDW_解吸压力.csv', header=None))
+    data = np.array(pd.read_csv('data/IDW_含气量.csv', header=None))
     plt.imshow(data)
-    # plt.colorbar(shrink=.83)
 
-    draw_scatter(well_points_array,range_x,range_y)
+    # cb=plt.colorbar(shrink=.83)
+    # font_set = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=12)
+    # cb.set_label('含气量（m³）',fontproperties=font_set)
+
+    draw_scatter(well_points_array,range_x,range_y,60)
+
+
+
 
 
 

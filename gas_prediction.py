@@ -9,6 +9,10 @@ from matplotlib.font_manager import FontProperties
 '''
 class Gas_prediction():
     def __init__(self,well_info):
+        '''
+        初始化
+        :param well_info:
+        '''
         self.A = well_info['A']  # 供气面积，m^2
         self.P_L =  well_info['P_L'] # Langmuir 压力系数，Mpa
         self.P_cd = well_info['P_cd']  # 临界解吸压力
@@ -166,8 +170,6 @@ class Gas_prediction():
         k_rw=S_w**2.5
         return k_rg,k_rw
 
-
-
     def get_gas_prediction(self,P,k_g,Z,P_wf,K):
         '''
         气体产能计算
@@ -207,18 +209,7 @@ class Gas_prediction():
         P_wf=P-(self.q_wi*self.B_W*self.mu_w*( np.log(self.r_e/self.r_w)-0.75+self.s )/(0.543*k_w*K*self.h))
         return P_wf
 
-    # def m(self,P_in,Z):
-    #     m_p=P_in**2/( self.mu_g*Z)
-    #     return m_p
-    # def get_gas_prediction(self,P,k_g,Z,P_wf):
-    #     P=P*145.0377439
-    #     P_wf=P_wf*145.0377439
-    #     h = self.h * 3.3
-    #     m_p=self.m(P,Z)
-    #     m_P_wf=self.m(P_wf,Z)
-    #     q_g=( k_g*h*(m_p-m_P_wf))/( 1422*self.T*(  np.log(self.r_e/self.r_w)-0.75+self.s  ) )*1000
-    #     q_g=0.0283168*q_g
-    #     return q_g
+
 
 def run(well_info,time):
     GP = Gas_prediction(well_info)
@@ -234,9 +225,11 @@ def run(well_info,time):
     phi_list=[]
     S_w_list=[]
     G_P_list=[]
+    W_p_list=[]
     P_wf_list=[]
     K_list=[]
     Kg_list=[]
+    Kw_list=[]
 
     '''
     定义初始参数
@@ -268,7 +261,10 @@ def run(well_info,time):
         if i % test_step == 0:
             q_w_list.append(q_w/10)
         # print('q_w:', q_w/10)
+
         W_p = W_p + q_w
+        if i % test_step == 0:
+            W_p_list.append(W_p)
         '''
         计算含水饱和度
         '''
@@ -343,7 +339,8 @@ def run(well_info,time):
             G_P_list.append(G_p)
         # print('G_p',G_p)
         if i % test_step == 0:
-            Kg_list.append(K*k_g)
+            Kg_list.append(k_g)
+            Kw_list.append(k_w)
 
     #
     print('采收率：',G_p/GP.G)
@@ -379,11 +376,23 @@ def run(well_info,time):
     # plt.scatter(i_list, Kg_list, marker='x', color='red', s=2, label='First')
     # plt.show()
 
-    plt.plot(i_list, P_list, marker='o', mec='blue',  lw=1,ms=2,label='日产水量')
-    # plt.plot(i_list, max_list, marker='o', mec='red',  lw=1,ms=5,label='种群最优值')
+    fig = plt.figure()
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
-    plt.title('水产能预测', fontproperties=font)
-    plt.legend(prop=font)
+
+    ax1 = fig.add_subplot(111)
+    line1=ax1.plot(i_list, Kg_list,'r',marker='o', mec='r',lw=1,ms=0,label='气相渗透率')
+
+    ax2 = ax1.twinx()  # this is the important function
+    line2=ax2.plot(i_list, Kw_list,'b', marker='x', mec='b',lw=1,ms=0,label='水相渗透率')
+
+    lns =line1+ line2
+    labs = [l.get_label() for l in lns]
+    plt.legend(lns, labs,prop=font,loc='center right')
+
+    ax1.set_xlabel('时间（天）',fontproperties=font)  # 设置x轴标题
+    ax1.set_ylabel('气相渗透率', color='r',fontproperties=font)  # 设置Y1轴标题
+    ax2.set_ylabel('水相渗透率', color='b',fontproperties=font)  # 设置Y2轴标题
+
     plt.show()
 
     return G_p
@@ -446,18 +455,18 @@ if __name__=="__main__":
 
     well_info = {
 
-        'A': 200*200*3.1415926,
-        'V_L': 24.75,
-        'P_L': 4,
-        'P_cd': 3.5,
-        'P_i': 6,
-        'h': 15,
-        'phi_i': 0.01,
-        'K_i': 2,
+        'A': 200*200,
+        'V_L':40.97,
+        'P_L': 3.69,
+        'P_cd': 6.236,
+        'P_i': 7.612,
+        'h':6.5,
+        'phi_i': 0.0498,
+        'K_i': 1.2,
         'rho_B': 1.58
     }
 
-    G_p = run(well_info, 800)
+    G_p = run(well_info, 720)
     # print([row, column], G_p / 1000000)
 
 

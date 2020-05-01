@@ -1,7 +1,6 @@
 import numpy as np
 
 from matplotlib import pyplot as plt
-# from gas_prediction_V3 import Gas_prediction
 from matplotlib.font_manager import FontProperties
 
 
@@ -211,28 +210,30 @@ def get_area(r,l):
     return area
 
 if __name__ =="__main__":
-    G_P_list = []
-    i_list=[]
 
+    i_list=[]
     q_g_list=[]
     q_w_list=[]
     P_list=[]
-
     Z_list=[]
     phi_list=[]
     S_w_list=[]
     A_list=[]
-
     P_wf_list=[]
     K_list=[]
-    GP_area_list=[]
 
-    profit_list=[]
-    price_in_list=[]
-    price_out_list=[]
+
+    G_P_well_list = []
+    G_P_grid_list = []
+    profit_list_well=[]
+    profit_list_grid= []
+    price_in_well_list=[]
+    price_in_grid_list=[]
+    price_out_well_list=[]
+    price_out_grid_list=[]
+
 
     well_price=6000000
-
 
     for l in range(200,410,20):
         A=l**2
@@ -318,33 +319,49 @@ if __name__ =="__main__":
 
             G_p = G_p + q_g
 
-
-
         i_list.append(l**2)
-        G_P_list.append(G_p)
 
-        GP_area_list.append(G_p*1000000/A)
-        price_in=(1000000/A)*G_p*0.95*1.44
-        price_in_list.append(price_in)
+        G_P_well_list.append(G_p)
+        G_P_grid_list.append(G_p*1000000/A)
 
-        price_out=(1000000/A)*well_price
-        price_out_list.append(price_out)
+        price_in_well=G_p * 0.95 * 1.44
+        price_in_well_list.append(price_in_well)
 
-        profit =1000000*( G_p * 0.95*1.44 - well_price)/A
-        # profit=G_p * 0.95*1.44-well_price
-        profit_list.append(profit)
+        price_in_grid=(1000000/A)*G_p*0.95*1.44
+        price_in_grid_list.append(price_in_grid)
+
+        price_out_well_list.append(well_price/10**6)
+
+        price_out_grid=(1000000/A)*well_price
+        price_out_grid_list.append(price_out_grid)
+
+        profit_well=G_p * 0.95*1.44-well_price
+        profit_list_well.append(profit_well)
+
+        profit_grid =1000000*( G_p * 0.95*1.44 - well_price)/A
+        profit_list_grid.append(profit_grid)
 
         print('井间距：',l,'采收率：', G_p / GP.G)
-    # print(i_list)
-    print(G_P_list)
-    print('单井单位面积利润列表：',profit_list)
 
+    print(G_P_well_list)
+    print('单井单位面积利润列表：',profit_list_well)
 
-    plt.plot(i_list, profit_list, marker='o', mec='red',  lw=1,ms=2,label='井网利润')
+    fig = plt.figure()
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
-    # plt.title('单井收入', fontproperties=font)
-    plt.legend(prop=font)
-    # plt.gca().invert_xaxis()
+
+    ax1 = fig.add_subplot(111)
+    line1=ax1.plot(i_list, G_P_well_list,'r',marker='o', mec='r',lw=1,ms=4,label='单井产气量')
+
+    ax2 = ax1.twinx()  # this is the important function
+    line2=ax2.plot(i_list, G_P_grid_list,'b', marker='x', mec='b',lw=1,ms=4,label='井网产气量')
+
+    lns =line1+ line2
+    labs = [l.get_label() for l in lns]
+    plt.legend(lns, labs,prop=font,loc="center right")
+
+    ax1.set_xlabel('单井控制面积（㎡）',fontproperties=font)  # 设置x轴标题
+    ax1.set_ylabel('单井产气量(m³)', color='r',fontproperties=font)  # 设置Y1轴标题
+    ax2.set_ylabel('井网产气量(m³)', color='b',fontproperties=font)  # 设置Y2轴标题
 
     plt.show()
 

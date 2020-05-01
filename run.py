@@ -8,20 +8,27 @@ from matplotlib.font_manager import FontProperties
 
 class GA():
     def __init__(self,GA_info):
-
-        self.GA_range_x =GA_info['GA_range_x']
-        self.GA_range_y = GA_info['GA_range_y']
-        self.GA_range_theta =GA_info['GA_range_theta']
-        self.GA_range_Delta_x= GA_info['GA_range_Delta_x']
-        self.GA_range_Delta_y=GA_info['GA_range_Delta_y']
-        self.GA_range_gamma=GA_info['GA_range_gamma']
-        self.num=GA_info['num']
-        self.n_max=GA_info['n_max']
-        self.cross_rate=GA_info['cross_rate']
-        self.mutate_rate=GA_info['mutate_rate']
-        self.save_rate=GA_info['save_rate']
+        '''
+        初始化
+        :param GA_info: 各种变化参数，以字典形式存在。
+        '''
+        self.GA_range_x =GA_info['GA_range_x']#横向间距变化范围
+        self.GA_range_y = GA_info['GA_range_y']#纵向间距变化范围
+        self.GA_range_theta =GA_info['GA_range_theta']#井网单元夹角变化范围
+        self.GA_range_Delta_x= GA_info['GA_range_Delta_x']#横向平移距离变化范围
+        self.GA_range_Delta_y=GA_info['GA_range_Delta_y']#纵向平移距离变化范围
+        self.GA_range_gamma=GA_info['GA_range_gamma']#旋转角度变化范围
+        self.num=GA_info['num']#种群数目
+        self.n_max=GA_info['n_max']#最大迭代次数
+        self.cross_rate=GA_info['cross_rate']#交叉因子
+        self.mutate_rate=GA_info['mutate_rate']#变异因子
+        self.save_rate=GA_info['save_rate']#保留因子
 
     def create_pop(self):
+        '''
+        个体编码与种群生成
+        :return: 种群
+        '''
         pop_list=[]
         for i in range(self.num):
             grid_info = {
@@ -36,6 +43,16 @@ class GA():
         return pop_list
 
     def save(self,pop_list_in,fitness_list_in):
+        '''
+        保留最优策略
+        :param pop_list_in: 种群
+        :param fitness_list_in: 种群个体适应度
+        :return:
+        pop_list_GA:非保留种群
+        pop_list_save:保留种群
+        fitness_list_GA:非保留种群适应度
+        fitness_list_save:保留种群适应度
+        '''
         fitness_list=copy.deepcopy(fitness_list_in)
         fitness_list=np.array(fitness_list)
         idx_list = np.argsort(fitness_list)[::-1]
@@ -55,41 +72,47 @@ class GA():
 
         return pop_list_GA,pop_list_save,fitness_list_GA,fitness_list_save
 
-    def select(self, pop_list_GA,fitness_list_GA):  # 根据概率选择
+    def select(self, pop_list_GA,fitness_list_GA):
+        '''
+        选择操作
+        :param pop_list_GA: 输入种群
+        :param fitness_list_GA: 输入种群个体适应度
+        :return:
+        pop_list_GA:选择操作后种群
+        fitness_GA_new_list:选择操作后种群个体适应度
+        '''
         pop_len = len(fitness_list_GA)
-
         min_value = np.min(fitness_list_GA)
         for i in range(len(fitness_list_GA)):
-            fitness_list_GA[i] = fitness_list_GA[i] - min_value + 1
-
+            fitness_list_GA[i] = fitness_list_GA[i] - min_value + 0.0001
         fitness_list = np.array(fitness_list_GA)
-
         idx = np.random.choice(np.arange(pop_len), size=pop_len, replace=True, p=(fitness_list / fitness_list.sum()))
-
         for i in range(len(fitness_list_GA)):
             fitness_list_GA[i] = fitness_list_GA[i]+ min_value -1
         pop_list = np.array(pop_list_GA)
-
         pop_list_GA=pop_list[idx]
         fitness_GA_new_list = fitness_list_GA[idx]
         return pop_list_GA,fitness_GA_new_list
 
-
-
     '''
     多点
     '''
-    def cross(self, pop_list_GA,fitness_list_GA,pop_list_save_in, n_now, n_max,data_array,range_x,range_y,compute_range_x,compute_range_y):
+    def cross(self, pop_list_GA,fitness_list_GA, n_now, n_max,data_array,range_x,range_y,compute_range_x,compute_range_y):
+        '''
+        多点交叉操作，主要参数如下：
+        :param pop_list_GA: 输入种群
+        :param fitness_list_GA: 输入种群个体适应度
+        :param n_now: 当前迭代次数
+        :param n_max: 最大迭代次数
+        :return:
+        child_list:交叉操作后新种群
+        fitness_list_child:交叉操作后新种群个体适应度
+        '''
         fitness_list_child=[]
-
-
         pop_list_save = copy.deepcopy(pop_list_GA)
         a = (n_max - n_now) / n_max
-
         pop_copy_list = copy.deepcopy(pop_list_GA)
         pop_copy_len = len(pop_list_save)
-
-
         child_list = []
         i=-1
 
@@ -138,7 +161,6 @@ class GA():
                     gamma_child = a * gamma_copy + (1 - a) * gamma
                     grid_info['gamma'] = gamma_child
 
-
             fitness_child = grid_gas_prediction(data_array, grid_info, range_x, range_y,compute_range_x,compute_range_y)
 
             if fitness_child >= fitness:
@@ -150,82 +172,17 @@ class GA():
 
         return child_list,fitness_list_child
 
-    '''
-    单点
-    '''
 
-    # def cross(self, pop_list_GA, fitness_list_GA, pop_list_save_in, n_now, n_max, data_array, range_x, range_y,compute_range_x, compute_range_y):
-    #     fitness_list_child = []
-    #
-    #     pop_list_save = copy.deepcopy(pop_list_GA)
-    #     a = (n_max - n_now) / n_max
-    #
-    #     pop_copy_list = copy.deepcopy(pop_list_GA)
-    #     pop_copy_len = len(pop_list_save)
-    #
-    #     child_list = []
-    #     i = -1
-    #
-    #     for grid_info in pop_copy_list:
-    #         grid_info_parent = copy.deepcopy(grid_info)
-    #
-    #         i = i + 1
-    #         fitness = fitness_list_GA[i]
-    #         idx = np.random.randint(0, pop_copy_len)
-    #         grid_info_copy = pop_list_save[idx]
-    #         if np.random.rand() < self.cross_rate:
-    #
-    #             idx_cross=np.random.randint(0,6)
-    #
-    #             if idx_cross == 0:
-    #                 x = grid_info['x']
-    #                 x_copy = grid_info_copy['x']
-    #                 x_child = a * x_copy + (1 - a) * x
-    #                 grid_info['x'] = x_child
-    #
-    #             if idx_cross == 1:
-    #                 y = grid_info['y']
-    #                 y_copy = grid_info_copy['y']
-    #                 y_child = a * y_copy + (1 - a) * y
-    #                 grid_info['y'] = y_child
-    #
-    #             if idx_cross == 2:
-    #                 theta = grid_info['theta']
-    #                 theta_copy = grid_info_copy['theta']
-    #                 theta_child = a * theta_copy + (1 - a) * theta
-    #                 grid_info['theta'] = theta_child
-    #
-    #             if idx_cross == 3:
-    #                 Delta_x = grid_info['Delta_x']
-    #                 Delta_x_copy = grid_info_copy['Delta_x']
-    #                 Delta_x_child = a * Delta_x_copy + (1 - a) * Delta_x
-    #                 grid_info['Delta_x'] = Delta_x_child
-    #
-    #             if idx_cross == 4:
-    #                 Delta_y = grid_info['Delta_y']
-    #                 Delta_y_copy = grid_info_copy['Delta_y']
-    #                 Delta_y_child = a * Delta_y_copy + (1 - a) * Delta_y
-    #                 grid_info['Delta_y'] = Delta_y_child
-    #
-    #             if idx_cross == 5:
-    #                 gamma = grid_info['gamma']
-    #                 gamma_copy = grid_info_copy['gamma']
-    #                 gamma_child = a * gamma_copy + (1 - a) * gamma
-    #                 grid_info['gamma'] = gamma_child
-    #
-    #         fitness_child = grid_gas_prediction(data_array, grid_info, range_x, range_y, compute_range_x,
-    #                                             compute_range_y)
-    #
-    #         if fitness_child >= fitness:
-    #             child_list.append(grid_info)
-    #             fitness_list_child.append(fitness_child)
-    #         else:
-    #             child_list.append(grid_info_parent)
-    #             fitness_list_child.append(fitness)
-    #
-    #     return child_list, fitness_list_child
 
     def mutate(self, child_list_in,fitness_list_child_in,GA_info,low_ratio,data_array,range_x, range_y, compute_range_x,compute_range_y):
+        '''
+        变异操作，主要参数如下：
+        :param child_list_in: 输入种群
+        :param fitness_list_child_in: 输入种群个体适应度
+        :return:
+        pop_list_mutate:变异操作后种群
+        fitness_list_mutate:变异操作后种群个体适应度
+        '''
         child_list=copy.deepcopy(child_list_in)
         fitness_list_child=copy.deepcopy(fitness_list_child_in)
         pop_list_mutate = []
@@ -236,7 +193,6 @@ class GA():
             i=i+1
             num = len(grid_info)
             idx = np.random.randint(0, num)
-
 
             if np.random.rand() < self.mutate_rate:
                 name = list(grid_info.keys())[idx]
@@ -251,7 +207,6 @@ class GA():
                 if fitness_mutate-fitness_list_child[i]>=0 or (fitness_list_child[i]-fitness_mutate)>=np.abs((1-low_ratio)*fitness_list_child[i]):
                     pop_list_mutate.append(grid_info)
                     fitness_list_mutate.append(fitness_mutate)
-
 
                 else:
                     pop_list_mutate.append(grid_info_parent)
@@ -309,6 +264,7 @@ def well_gas_prediction(well_info,time):
     '''
     设定排采时间，动态预测
     '''
+    profit_well=0
     for i in range(time):
         # print(i+1)
         i_list.append(i*30)
@@ -385,7 +341,12 @@ def well_gas_prediction(well_info,time):
 
         G_p = G_p + q_g
 
-    return G_p
+        t=np.floor(i/12)+1
+
+        profit=(q_g*1.44-400000/12)*(1)**(- t)
+        profit_well=profit_well+profit
+
+    return profit_well
 
 def grid_gas_prediction(data_array,grid_info_in,range_x,range_y,compute_range_x,compute_range_y):
     grid_info=copy.deepcopy(grid_info_in)
@@ -395,6 +356,7 @@ def grid_gas_prediction(data_array,grid_info_in,range_x,range_y,compute_range_x,
     well_grid_GP = 0
 
     area = int(grid_info['x'] * grid_info['y'] * np.sin(grid_info['theta'] * np.pi / 180))
+    profit_grid=0
 
     for x_y in well_points_array:
 
@@ -414,16 +376,12 @@ def grid_gas_prediction(data_array,grid_info_in,range_x,range_y,compute_range_x,
             'K_i': info_dict['K_i'],
             'rho_B': 1.58
         }
-        G_p = well_gas_prediction(well_info, 180)
+        profit_well = well_gas_prediction(well_info, 180)
 
-        well_grid_GP = well_grid_GP + G_p
+        profit_grid = profit_grid + profit_well
 
 
-    profit=well_grid_GP*1.44-6000000*well_num
-    # profit = well_grid_GP /(well_num+0.00001)-150000
-
-    # print('well_num:',well_num,' grid_GP:', well_grid_GP,' profit:',profit,' mean_well_profit:',profit/well_num,' mean_well_year_profit:',profit/(well_num*15))
-    return profit
+    return profit_grid
 
 def get_fitness_list(pop_list,data_array,range_x,range_y,compute_range_x,compute_range_y):
 
@@ -435,7 +393,6 @@ def get_fitness_list(pop_list,data_array,range_x,range_y,compute_range_x,compute
     return fitness_list
 
 if __name__=='__main__':
-
 
     # range_x=[623935,629935]
     # range_y=[3959412,3965412]
@@ -537,11 +494,11 @@ if __name__=='__main__':
         'GA_range_Delta_x': [0, 400],
         'GA_range_Delta_y': [0, 400],
         'GA_range_gamma': [0, 90],
-        'num': 10,
+        'num': 30,
         'n_max': 300,
         'cross_rate': 0.8,
-        'mutate_rate': 0.3,
-        'save_rate': 0.15
+        'mutate_rate': 0.1,
+        'save_rate': 0.1
     }
     GA = GA(GA_info)
     pop_list_all = GA.create_pop()
@@ -550,6 +507,7 @@ if __name__=='__main__':
     mean_list = []
     max_list = []
     i_list = []
+    max_grid_list=[]
 
     for i in range(GA.n_max):
         i_list.append(i)
@@ -561,15 +519,16 @@ if __name__=='__main__':
         idx = np.argmax(fitness_list)
         max_grid = pop_list_all[idx]
 
-        # pd.DataFrame(zip(fitness_list,pop_list_all),columns=[i+1,'']).to_csv('data/GA_process.csv',mode='a+',index=0)
+        # pd.DataFrame(zip(fitness_list,pop_list_all)).to_csv('data/GA_process.csv',mode='a+',index=0,header=None)
         print('Generation:', i + 1, ' mean_value:', int(mean_value), ' max_value:', int(max_value), ' max_grid:',
               max_grid)
-
+        if max_grid not in max_grid_list:
+            max_grid_list.append(max_grid)
         pop_list_GA, pop_list_save, fitness_list_GA, fitness_list_save = GA.save(pop_list_all, fitness_list)
 
         pop_list_GA, fitness_list_GA = GA.select(pop_list_GA, fitness_list_GA)
 
-        pop_list_GA, fitness_list_GA = GA.cross(pop_list_GA, fitness_list_GA, pop_list_save, i, GA.n_max, data_array,
+        pop_list_GA, fitness_list_GA = GA.cross(pop_list_GA, fitness_list_GA,i, GA.n_max, data_array,
                                                 range_x, range_y, compute_range_x, compute_range_y)
 
         pop_list_GA, fitness_list_GA = GA.mutate(pop_list_GA, fitness_list_GA, GA_info, 0.9, data_array, range_x,
@@ -577,6 +536,8 @@ if __name__=='__main__':
 
         pop_list_all = np.concatenate((pop_list_save, pop_list_GA), axis=0)
         fitness_list = np.concatenate((fitness_list_save, fitness_list_GA), axis=0)
+
+    pd.DataFrame(np.array(max_grid_list)).to_csv('data_out/result_info.csv',index=0)
 
     plt.plot(i_list, mean_list, marker='x', mec='blue', lw=1, ms=5, label='种群平均值')
     plt.plot(i_list, max_list, marker='o', mec='red', lw=1, ms=5, label='种群最优值')

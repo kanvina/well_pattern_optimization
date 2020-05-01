@@ -389,7 +389,7 @@ def run(well_info,time):
     plt.plot(i_list, K_rg_list, marker='o', mec='blue',  lw=1,ms=2,label='气相对渗透率')
     # plt.plot(i_list, max_list, marker='o', mec='red',  lw=1,ms=5,label='种群最优值')
     font = FontProperties(fname=r"c:\windows\fonts\msyh.ttc")
-    plt.title('气相对渗透率', fontproperties=font)
+    # plt.title('气相对渗透率', fontproperties=font)
     plt.legend(prop=font)
     plt.show()
 
@@ -453,18 +453,19 @@ if __name__=="__main__":
 
     well_info = {
 
-        'A': 200*200*3.1415926,
-        'V_L': 24.75,
-        'P_L': 4,
-        'P_cd': 3.5,
-        'P_i': 6,
-        'h': 15,
-        'phi_i': 0.01,
-        'K_i': 2,
+        'A': 200*200,
+        'V_L':40.97,
+        'P_L': 3.69,
+        'P_cd': 6.236,
+        'P_i': 7.612,
+        'h':6.5,
+        'phi_i': 0.0498,
+        'K_i': 1.2,
         'rho_B': 1.58
     }
 
-    G_p = run(well_info, 800)
+
+    G_p = run(well_info, 720)
     # print([row, column], G_p / 1000000)
 
 
